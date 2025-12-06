@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alex & Sam — Save the Date</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="couple-names">Alex & Sam</h1>
+      <p class="date-location">June 21, 2026 • Lakeview Gardens, Seattle, WA</p>
+    </div>
+  </header>
+
+  <nav class="top-nav container">
+    <a href="index.html">Home</a>
+    <a href="#details">Event Details</a>
+    <a href="hotels.html" class="disabled">Hotels</a> <!-- placeholder: could be separate file -->
+    <a href="gallery.html" class="disabled">Gallery</a>
+    <a href="registry.html" class="disabled">Registry</a>
+    <a href="rsvp.html?code=ABC123" class="cta">RSVP</a>
+  </nav>
+
+  <main class="container">
+    <section id="hero" class="card hero">
+      <h2>Save the Date</h2>
+      <p class="lead">We are thrilled to invite you to celebrate our wedding.</p>
+      <p class="big-date">June 21, 2026</p>
+      <p class="small-location">Lakeview Gardens, Seattle</p>
+      <p><a class="btn" href="rsvp.html?code=ABC123">RSVP — click here</a></p>
+    </section>
+
+    <section id="details" class="card">
+      <h3>Event Details</h3>
+      <div class="event-grid">
+        <div class="event">
+          <h4>Ceremony</h4>
+          <p><strong>Time:</strong> 3:00 PM</p>
+          <p><strong>Location:</strong> Lakeview Gardens — Lakeside Pavilion</p>
+        </div>
+        <div class="event">
+          <h4>Reception</h4>
+          <p><strong>Time:</strong> 5:30 PM (Cocktail Hour) • 6:30 PM (Dinner)</p>
+          <p><strong>Location:</strong> Lakeview Gardens — Grand Ballroom</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>Quick Info</h3>
+      <ul>
+        <li>Dress code: Semi-formal</li>
+        <li>Parking: Onsite + Valet</li>
+        <li>Kids: Welcome (please RSVP counts)</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h3>Need to RSVP for a different code?</h3>
+      <p>Use the personalized link you received by e-mail. Example test links:</p>
+      <ul>
+        <li><a href="rsvp.html?code=ABC123">ABC123 — The Smiths</a></li>
+        <li><a href="rsvp.html?code=XYZ789">XYZ789 — John & Jane</a></li>
+        <li><a href="rsvp.html?code=FAM456">FAM456 — Garcia Family</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; Alex & Sam — June 21, 2026</p>
+    </div>
+  </footer>
+
+  <script>
+    // small inline script to prevent broken links for placeholder pages
+    document.addEventListener('DOMContentLoaded',()=> {
+      document.querySelectorAll('a.disabled').forEach(a=>{
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          alert('This demo includes main pages only. You can add Hotels/Gallery/Registry files similarly.');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
