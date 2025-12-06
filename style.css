@@ -65,12 +65,19 @@ body{
 .event-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .event h4{margin:0 0 6px 0}
 
-.rsvp-card{max-width:720px;margin:0 auto}
+.rsvp-card{
+  background:var(--card-bg);
+  padding:18px;
+  border-radius:var(--radius);
+  box-shadow:0 6px 18px rgba(20,20,50,0.04);
+  margin-bottom:18px;
+}
 
 input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6e9f2;font-size:14px;margin-top:6px}
 fieldset{border:0;padding:0;margin:10px 0}
 legend{font-weight:600}
 label{display:block;margin-top:10px;font-size:14px}
+
 
 .form-msg{color:#d9534f;margin-top:6px}
 
