@@ -33,19 +33,14 @@
                 <div id="lookup">
                     <h3>Have an invitation code?</h3>
                     <form id="lookup-form" method="get" action="">
-                        <label for="inviteCode">Enter your code</label>
+                        <label for="inviteCode">Enter the personalized code from your invitation.</label>
                         <input id="inviteCode" name="code" type="text" required placeholder="e.g. ABC123" />
-                        <p class="help">Enter the personalized code from your invitation. The page will reload with the code in the URL.</p>
                         <div class="form-row">
-                            <button type="submit" class="btn">Lookup</button>
+                            <button type="submit" class="btn">Enter</button>
                         </div>
                     </form>
                 </div>
-                <div id="not-found" class="hidden">
-                    <h3>Invitation not found</h3>
-                    <p>We could not locate the code you provided. Please check your personalized link or contact the
-                        couple.</p>
-                </div>
+        
 
                 <form id="rsvp-form" class="hidden" method="POST" action="https://formspree.io/f/YOUR_FORMSPREE_ID">
                     <!-- Hidden fields to capture lookup results -->
