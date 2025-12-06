@@ -1,92 +1,104 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RSVP — Alex & Sam</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>RSVP — Isabella Payan & Aldo Sanchez</title>
+
+
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <header class="site-header small">
-    <div class="container">
-      <h1 class="couple-names">Alex & Sam — RSVP</h1>
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="card rsvp-card">
-      <div id="rsvp-root">
-        <p id="loading">Looking up your invitation...</p>
-
-        <div id="not-found" class="hidden">
-          <h3>Invitation not found</h3>
-          <p>We could not locate the code you provided. Please check your personalized link or contact the couple.</p>
-          <p>If you're testing, try: <a href="rsvp.html?code=ABC123">ABC123</a></p>
+    <header class="site-header small">
+        <div class="container">
+            <h1 class="couple-names">Isabella Payan & Aldo Sanchez — RSVP</h1>
         </div>
+    </header>
 
-        <form id="rsvp-form" class="hidden" method="POST" action="https://formspree.io/f/YOUR_FORMSPREE_ID">
-          <!-- Hidden fields to capture lookup results -->
-          <input type="hidden" name="UniqueCode" id="field-code" />
-          <input type="hidden" name="GuestGroupName" id="field-group" />
+    <main class="container">
+        <section class="card rsvp-card">
+            <div id="rsvp-root">
+                <p id="loading">Looking up your invitation...</p>
 
-          <h3 id="welcome">Welcome, Guest!</h3>
+                <div id="not-found" class="hidden">
+                    <h3>Invitation not found</h3>
+                    <p>We could not locate the code you provided. Please check your personalized link or contact the
+                        couple.</p>
+                    <p>If you're testing, try: <a href="rsvp.html?code=ABC123">ABC123</a></p>
+                </div>
 
-          <label for="contactName">Contact name (who is replying)</label>
-          <input id="contactName" name="ContactName" type="text" required placeholder="Your name" />
+                <form id="rsvp-form" class="hidden" method="POST" action="https://formspree.io/f/YOUR_FORMSPREE_ID">
+                    <!-- Hidden fields to capture lookup results -->
+                    <input type="hidden" name="UniqueCode" id="field-code" />
+                    <input type="hidden" name="GuestGroupName" id="field-group" />
 
-          <fieldset>
-            <legend>Will you attend?</legend>
-            <label><input type="checkbox" id="attendCeremony" name="AttendCeremony" value="Yes" /> Ceremony</label>
-            <label><input type="checkbox" id="attendReception" name="AttendReception" value="Yes" /> Reception / Dinner</label>
-          </fieldset>
+                    <h3 id="welcome">Welcome, Guest!</h3>
 
-          <label for="guestCount">Total guests attending (including you)</label>
-          <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
+                    <label for="contactName">Contact name (who is replying)</label>
+                    <input id="contactName" name="ContactName" type="text" required placeholder="Your name" />
 
-          <fieldset>
-            <legend>Dietary needs</legend>
-            <label><input type="radio" name="Vegetarian" value="No" checked /> No</label>
-            <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
-          </fieldset>
+                    <fieldset>
+                        <legend>Will you attend?</legend>
+                        <label><input type="checkbox" id="attendCeremony" name="AttendCeremony" value="Yes" />
+                            Ceremony</label>
+                        <label><input type="checkbox" id="attendReception" name="AttendReception" value="Yes" />
+                            Reception / Dinner</label>
+                    </fieldset>
 
-          <label for="notes">Notes (optional)</label>
-          <textarea id="notes" name="Notes" rows="3" placeholder="Song requests, accessibility needs, etc."></textarea>
+                    <label for="guestCount">Total guests attending (including you)</label>
+                    <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
 
-          <p id="form-msg" class="form-msg"></p>
+                    <fieldset>
+                        <legend>Dietary needs</legend>
+                        <label><input type="radio" name="Vegetarian" value="No" checked /> No</label>
+                        <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
+                    </fieldset>
 
-          <div class="form-row">
-            <button type="submit" class="btn">Submit RSVP</button>
-            <button type="button" id="cancelBtn" class="btn alt">Cancel</button>
-          </div>
-        </form>
-      </div>
-    </section>
+                    <label for="notes">Notes (optional)</label>
+                    <textarea id="notes" name="Notes" rows="3"
+                        placeholder="Song requests, accessibility needs, etc."></textarea>
 
-    <section class="card">
-      <h4>Need help?</h4>
-      <p>If you didn't receive a code, please contact us at <a href="mailto:alexandsam@example.com">alexandsam@example.com</a>.</p>
-    </section>
-  </main>
+                    <p id="form-msg" class="form-msg"></p>
 
-  <footer class="site-footer">
-    <div class="container"><p>&copy; Alex & Sam</p></div>
-  </footer>
+                    <div class="form-row">
+                        <button type="submit" class="btn">Submit RSVP</button>
+                        <button type="button" id="cancelBtn" class="btn alt">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </section>
 
-  <script src="script.js"></script>
-  <script>
-    // Initialize RSVP behaviour for this page
-    document.addEventListener('DOMContentLoaded', () => {
-      RSVP.init({
-        formSelector: '#rsvp-form',
-        loadingSelector: '#loading',
-        notFoundSelector: '#not-found',
-        codeFieldSelector: '#field-code',
-        groupFieldSelector: '#field-group',
-        welcomeSelector: '#welcome',
-        guestCountSelector: '#guestCount',
-        maxGuestAttr: 'data-max-guests'
-      });
-    });
-  </script>
+        <section class="card">
+            <h4>Need help?</h4>
+            <p>If you didn't receive a code, please contact us at <a
+                    href="mailto:alexandsam@example.com">alexandsam@example.com</a>.</p>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; Alex & Sam</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize RSVP behaviour for this page
+        document.addEventListener('DOMContentLoaded', () => {
+            RSVP.init({
+                formSelector: '#rsvp-form',
+                loadingSelector: '#loading',
+                notFoundSelector: '#not-found',
+                codeFieldSelector: '#field-code',
+                groupFieldSelector: '#field-group',
+                welcomeSelector: '#welcome',
+                guestCountSelector: '#guestCount',
+                maxGuestAttr: 'data-max-guests'
+            });
+        });
+    </script>
 </body>
+
 </html>

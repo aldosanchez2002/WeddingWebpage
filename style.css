@@ -85,3 +85,21 @@ label{display:block;margin-top:10px;font-size:14px}
 /* small touches */
 .small .couple-names{font-size:20px}
 .site-footer{padding:20px 0;text-align:center;color:var(--muted)}
+#gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+#gallery-grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+#gallery-grid img:hover {
+  transform: scale(1.03);
+}
