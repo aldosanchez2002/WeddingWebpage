@@ -32,9 +32,18 @@
             <p class="lead">We’re so excited to celebrate our wedding with you!</p>
             <p class="big-date">January 16, 2027</p>
             <p class="small-location">The Plaza Hotel at Pioneer Park</p>
-            <figure class="hero-figure">
-                <img src="assets/plaza.png" alt="The Plaza Hotel at Pioneer Park" class="hero-image" loading="lazy" />
-            </figure>
+            <style>
+                /* make the hero section use the image as its background */
+                #hero {
+                    background-image: url("assets/plaza.png");
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    min-height: 320px;
+                    color: #fff;
+                    /* ensure text is readable over the image */
+                }
+            </style>
             <p>
                 <a class="btn" href="https://share.google/7vI6WLxEsqq4F4RqX" target="_blank">
                     View Location on Google Maps
