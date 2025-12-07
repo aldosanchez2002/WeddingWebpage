@@ -4,9 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>RSVP —Aldo Sanchez & Isabella Payan</title>
-
-
+    <title>RSVP — Aldo Sanchez & Isabella Payan</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -17,19 +15,20 @@
         </div>
     </header>
 
-
-<!-- Navigation -->
-<nav class="top-nav container">
-  <a href="index.html">Home</a>
-  <a href="gallery.html">Gallery</a>
-  <a href="registry.html">Registry</a>
-  <a href="rsvp.html" class="cta">RSVP</a>
-</nav>
+    <!-- Navigation -->
+    <nav class="top-nav container">
+        <a href="index.html">Home</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="registry.html">Registry</a>
+        <a href="rsvp.html" class="cta">RSVP</a>
+    </nav>
 
     <main class="container">
         <section class="card rsvp-card">
             <div id="rsvp-root">
                 <p id="loading">Looking up your invitation...</p>
+
+                <!-- Initial code lookup -->
                 <div id="lookup">
                     <h3>Have an invitation code?</h3>
                     <form id="lookup-form" method="get" action="">
@@ -40,9 +39,17 @@
                         </div>
                     </form>
                 </div>
-        
 
-                <form id="rsvp-form" class="hidden" method="POST" action="https://formspree.io/f/YOUR_FORMSPREE_ID">
+                <!-- Not found / error message -->
+                <div id="not-found" class="hidden">
+                    <h3>Invitation not found</h3>
+                    <p>Sorry, we could not find your invitation code. Please double-check or contact us at
+                        <a href="mailto:aldo.y.isabella@gmail.com">aldo.y.isabella@gmail.com</a>.
+                    </p>
+                </div>
+
+                <!-- RSVP form -->
+                <form id="rsvp-form" class="hidden">
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GuestGroupName" id="field-group" />
@@ -98,7 +105,7 @@
 
     <script src="script.js"></script>
     <script>
-        // Initialize RSVP behaviour for this page
+        // Initialize RSVP behaviour
         document.addEventListener('DOMContentLoaded', () => {
             RSVP.init({
                 formSelector: '#rsvp-form',
@@ -107,8 +114,7 @@
                 codeFieldSelector: '#field-code',
                 groupFieldSelector: '#field-group',
                 welcomeSelector: '#welcome',
-                guestCountSelector: '#guestCount',
-                maxGuestAttr: 'data-max-guests'
+                guestCountSelector: '#guestCount'
             });
         });
     </script>
