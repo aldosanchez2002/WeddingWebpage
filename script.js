@@ -109,7 +109,7 @@ const RSVP = (function () {
       groupHidden.value = entry.GroupName;
 
       // Welcome text
-      welcome.textContent = `Welcome, ${entry.GroupName}!`;
+      welcome.textContent = `Welcome ${entry.GroupName}!`;
 
       // Ceremony invitation
       const ceremonyFieldset = document.getElementById('ceremony-fieldset');
