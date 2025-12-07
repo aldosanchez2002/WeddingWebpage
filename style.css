@@ -268,3 +268,9 @@ label {
   margin-bottom: 0.5rem;
   margin-top: 0;
 }
+
+.registry-message {
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}

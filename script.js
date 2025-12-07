@@ -179,20 +179,15 @@ const RSVP = (function () {
           Notes: document.getElementById('notes').value
         };
 
-            GOOGLE_SCRIPT_URL,
-
         try {
-          const res = await fetch(
-            "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec",
-            {
-              method: "POST",
-              body: JSON.stringify(payload),
-              redirect: "follow",
-              headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-              }
+          const res = await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            redirect: "follow",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
             }
-          );
+          });
 
           if (res.ok) {
             formMsg.textContent = "✅ Thank you! Your RSVP has been recorded.";
