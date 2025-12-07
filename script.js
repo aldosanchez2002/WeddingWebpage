@@ -73,13 +73,13 @@ const RSVP = (function () {
     const code = getQueryParam('code');
 
     if (!code) {
-      loading.textContent = 'Please enter your invitation code.';
-      hide(loading);
-      show(document.getElementById('lookup'));
+      // If no code is present, we are already showing the #lookup form
+      // due to the HTML change, so we just exit the function.
       return;
     }
 
     hide(document.getElementById('lookup'));
+    show(loading);
 
     try {
       const guestList = await fetchGuestList(cfg.guestlistPath);
@@ -201,7 +201,7 @@ const RSVP = (function () {
         }
       });
 
-        notFound.textContent = "Error loading invitation data.";
+      notFound.textContent = "Error loading invitation data.";
       console.error(err);
       hide(loading);
       if (notFound) {

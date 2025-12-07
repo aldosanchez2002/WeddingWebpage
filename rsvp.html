@@ -26,10 +26,8 @@
     <main class="container">
         <section class="card rsvp-card">
             <div id="rsvp-root">
-                <p id="loading">Looking up your invitation...</p>
 
-                <!-- Initial code lookup -->
-                <div id="lookup" class="hidden">
+                <div id="lookup">
                     <h3>Have an invitation code?</h3>
                     <form id="lookup-form" method="get" action="">
                         <label for="inviteCode">Enter the personalized code from your invitation.</label>
@@ -40,7 +38,8 @@
                     </form>
                 </div>
 
-                <!-- Not found / error message -->
+                <p id="loading" class="hidden">Looking up your invitation...</p>
+
                 <div id="not-found" class="hidden">
                     <h3>Invitation not found</h3>
                     <p>Sorry, we could not find your invitation code. Please double-check or contact us at
@@ -48,23 +47,26 @@
                     </p>
                 </div>
 
-                <!-- RSVP form -->
                 <form id="rsvp-form" class="hidden">
-                    <p id="welcome" style="font-weight: 600; margin-bottom: 12px;"></p>
+                    <p id="welcome" style="font-weight: 600 /* You should move this style to style.css */">...</p>
+
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GroupName" id="field-group" />
 
                     <fieldset id="ceremony-fieldset" style="margin-bottom: 16px;">
                         <legend>Will you attend the ceremony?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" id="attendCeremonyYes" name="AttendCeremony" value="Yes" checked /> Yes</label>
+                        <label style="margin-right: 16px;"><input type="radio" id="attendCeremonyYes"
+                                name="AttendCeremony" value="Yes" checked /> Yes</label>
                         <label><input type="radio" id="attendCeremonyNo" name="AttendCeremony" value="No" /> No</label>
                     </fieldset>
 
                     <fieldset id="reception-fieldset" style="margin-bottom: 16px;">
                         <legend>Will you attend the reception?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" id="attendReceptionYes" name="AttendReception" value="Yes" checked /> Yes</label>
-                        <label><input type="radio" id="attendReceptionNo" name="AttendReception" value="No" /> No</label>
+                        <label style="margin-right: 16px;"><input type="radio" id="attendReceptionYes"
+                                name="AttendReception" value="Yes" checked /> Yes</label>
+                        <label><input type="radio" id="attendReceptionNo" name="AttendReception" value="No" />
+                            No</label>
                     </fieldset>
 
                     <label for="guestCount">Total guests attending</label>
@@ -72,7 +74,8 @@
 
                     <fieldset>
                         <legend>Are you vegetarian?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" name="Vegetarian" value="No" checked /> No</label>
+                        <label style="margin-right: 16px;"><input type="radio" name="Vegetarian" value="No" checked />
+                            No</label>
                         <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
                     </fieldset>
 
