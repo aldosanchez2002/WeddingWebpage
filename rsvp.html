@@ -53,13 +53,17 @@
                     <p id="welcome" style="font-weight: 600; margin-bottom: 12px;"></p>
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
-                    <input type="hidden" name="GuestGroupName" id="field-group" />
+                    <input type="hidden" name="GroupName" id="field-group" />
                     <input id="contactName" name="ContactName" type="text" required placeholder="Your name" />
 
                     <fieldset>
                         <legend>Will you attend?</legend>
-                        <label><input type="checkbox" id="attendCeremony" name="AttendCeremony" value="Yes" />
-                            Ceremony</label>
+
+                        <fieldset id="ceremony-fieldset" style="border: none; padding: 0;">
+                            <label><input type="checkbox" id="attendCeremony" name="AttendCeremony" value="Yes" />
+                                Ceremony</label>
+                        </fieldset>
+
                         <label><input type="checkbox" id="attendReception" name="AttendReception" value="Yes" />
                             Reception / Dinner</label>
                     </fieldset>

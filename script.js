@@ -106,11 +106,19 @@ const RSVP = (function () {
 
       // Fill hidden fields
       codeHidden.value = entry.UniqueCode;
-      groupHidden.value = entry.GuestGroupName;
+      groupHidden.value = entry.GroupName;
 
       // Welcome text
-      welcome.textContent = `Welcome, ${entry.GuestGroupName}!`;
+      welcome.textContent = `Welcome, ${entry.GroupName}!`;
 
+      // Ceremony invitation
+      const ceremonyFieldset = document.getElementById('ceremony-fieldset');
+      const isInvitedToCeremony = entry.InvitedToCeremony === true;
+
+      if (!isInvitedToCeremony) {
+        hide(ceremonyFieldset);
+        document.getElementById('attendCeremony').checked = false;
+      }
       // Guest limit
       const max = parseInt(entry.MaxAllowedGuests || 1, 10);
       guestCountInput.setAttribute('min', '0');
@@ -159,7 +167,7 @@ const RSVP = (function () {
         const vegetarianInput = document.querySelector(vegetarianSelector);
         const payload = {
           UniqueCode: codeHidden.value,
-          GuestGroupName: groupHidden.value,
+          GroupName: groupHidden.value,
           ContactName: document.getElementById('contactName').value,
           AttendCeremony: attendCeremony ? "Yes" : "No",
           AttendReception: attendReception ? "Yes" : "No",
