@@ -54,26 +54,25 @@
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GroupName" id="field-group" />
-                    <input id="contactName" name="ContactName" type="text" required placeholder="Your name" />
 
-                    <fieldset>
-                        <legend>Will you attend?</legend>
-
-                        <fieldset id="ceremony-fieldset" style="border: none; padding: 0;">
-                            <label><input type="checkbox" id="attendCeremony" name="AttendCeremony" value="Yes" />
-                                Ceremony</label>
-                        </fieldset>
-
-                        <label><input type="checkbox" id="attendReception" name="AttendReception" value="Yes" />
-                            Reception / Dinner</label>
+                    <fieldset id="ceremony-fieldset" style="margin-bottom: 16px;">
+                        <legend>Will you attend the ceremony?</legend>
+                        <label style="margin-right: 16px;"><input type="radio" id="attendCeremonyYes" name="AttendCeremony" value="Yes" checked /> Yes</label>
+                        <label><input type="radio" id="attendCeremonyNo" name="AttendCeremony" value="No" /> No</label>
                     </fieldset>
 
-                    <label for="guestCount">Total guests attending (including you)</label>
+                    <fieldset id="reception-fieldset" style="margin-bottom: 16px;">
+                        <legend>Will you attend the reception?</legend>
+                        <label style="margin-right: 16px;"><input type="radio" id="attendReceptionYes" name="AttendReception" value="Yes" checked /> Yes</label>
+                        <label><input type="radio" id="attendReceptionNo" name="AttendReception" value="No" /> No</label>
+                    </fieldset>
+
+                    <label for="guestCount">Total guests attending</label>
                     <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
 
                     <fieldset>
                         <legend>Are you vegetarian?</legend>
-                        <label><input type="radio" name="Vegetarian" value="No" checked /> No</label>
+                        <label style="margin-right: 16px;"><input type="radio" name="Vegetarian" value="No" checked /> No</label>
                         <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
                     </fieldset>
 
@@ -106,7 +105,7 @@
 
     <script src="script.js"></script>
     <script>
-        // Initialize RSVP behaviour
+        // Initialize RSVP behavior
         document.addEventListener('DOMContentLoaded', () => {
             RSVP.init({
                 formSelector: '#rsvp-form',

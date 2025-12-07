@@ -30,7 +30,7 @@ const RSVP = (function () {
     } catch (err) {
       const bin = atob(b64);
       const bytes = new Uint8Array(bin.length);
-      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      for (let byteIndex = 0; byteIndex < bin.length; byteIndex++) bytes[byteIndex] = bin.charCodeAt(byteIndex);
       const decoded = new TextDecoder('utf-8').decode(bytes);
       return JSON.parse(decoded);
     }
@@ -165,10 +165,13 @@ const RSVP = (function () {
 
         const vegetarianSelector = 'input[name="Vegetarian"]:checked';
         const vegetarianInput = document.querySelector(vegetarianSelector);
+        if (!vegetarianInput) {
+          formMsg.textContent = 'Please select a vegetarian preference.';
+          return;
+        }
         const payload = {
           UniqueCode: codeHidden.value,
           GroupName: groupHidden.value,
-          ContactName: document.getElementById('contactName').value,
           AttendCeremony: attendCeremony ? "Yes" : "No",
           AttendReception: attendReception ? "Yes" : "No",
           GuestCount: guestCountInput.value,
@@ -176,7 +179,7 @@ const RSVP = (function () {
           Notes: document.getElementById('notes').value
         };
 
-        formMsg.textContent = "Submitting...";
+            GOOGLE_SCRIPT_URL,
 
         try {
           const res = await fetch(
@@ -203,7 +206,7 @@ const RSVP = (function () {
         }
       });
 
-    } catch (err) {
+        notFound.textContent = "Error loading invitation data.";
       console.error(err);
       hide(loading);
       if (notFound) {
