@@ -221,3 +221,16 @@ const RSVP = (function () {
 
   return { init };
 })();
+
+// Initialize RSVP after DOM is ready to avoid race conditions
+document.addEventListener('DOMContentLoaded', () => {
+  RSVP.init({
+    formSelector: '#rsvp-form',
+    loadingSelector: '#loading',
+    notFoundSelector: '#not-found',
+    codeFieldSelector: '#field-code',
+    groupFieldSelector: '#field-group',
+    welcomeSelector: '#welcome',
+    guestCountSelector: '#guestCount'
+  });
+});
