@@ -81,6 +81,8 @@ const RSVP = (function () {
       return;
     }
 
+    hide(document.getElementById('lookup'));
+    
     try {
       const guestList = await fetchGuestList(cfg.guestlistPath);
 

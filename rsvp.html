@@ -29,7 +29,7 @@
                 <p id="loading">Looking up your invitation...</p>
 
                 <!-- Initial code lookup -->
-                <div id="lookup">
+                <div id="lookup" class="hidden">
                     <h3>Have an invitation code?</h3>
                     <form id="lookup-form" method="get" action="">
                         <label for="inviteCode">Enter the personalized code from your invitation.</label>
@@ -50,6 +50,7 @@
 
                 <!-- RSVP form -->
                 <form id="rsvp-form" class="hidden">
+                    <p id="welcome" style="font-weight: 600; margin-bottom: 12px;"></p>
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GuestGroupName" id="field-group" />
