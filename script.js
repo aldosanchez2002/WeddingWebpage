@@ -10,9 +10,7 @@ const RSVP = (function () {
 
   // ===== CONFIG =====
   const GOOGLE_SCRIPT_URL =
-    'https://script.google.com/macros/s/' +
-    'AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA' +
-    '/exec';
+    "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec"
 
   // Helper: get query param
   function getQueryParam(name) {
@@ -82,7 +80,7 @@ const RSVP = (function () {
     }
 
     hide(document.getElementById('lookup'));
-    
+
     try {
       const guestList = await fetchGuestList(cfg.guestlistPath);
 
