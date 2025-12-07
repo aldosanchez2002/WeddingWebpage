@@ -53,10 +53,6 @@
                     <!-- Hidden fields to capture lookup results -->
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GuestGroupName" id="field-group" />
-
-                    <h3 id="welcome">Welcome, Guest!</h3>
-
-                    <label for="contactName">Contact name (who is replying)</label>
                     <input id="contactName" name="ContactName" type="text" required placeholder="Your name" />
 
                     <fieldset>
@@ -71,7 +67,7 @@
                     <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
 
                     <fieldset>
-                        <legend>Dietary needs</legend>
+                        <legend>Are you vegetarian?</legend>
                         <label><input type="radio" name="Vegetarian" value="No" checked /> No</label>
                         <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
                     </fieldset>
