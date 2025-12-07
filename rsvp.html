@@ -54,27 +54,28 @@
                     <input type="hidden" name="UniqueCode" id="field-code" />
                     <input type="hidden" name="GroupName" id="field-group" />
 
-                    <fieldset id="ceremony-fieldset" style="margin-bottom: 16px;">
+                    <label for="guestCount">Total guests attending</label>
+                    <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
+
+                    <fieldset id="ceremony-fieldset">
                         <legend>Will you attend the ceremony?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" id="attendCeremonyYes"
+                        <label><input type="radio" id="attendCeremonyYes"
                                 name="AttendCeremony" value="Yes" checked /> Yes</label>
                         <label><input type="radio" id="attendCeremonyNo" name="AttendCeremony" value="No" /> No</label>
                     </fieldset>
 
-                    <fieldset id="reception-fieldset" style="margin-bottom: 16px;">
+                    <fieldset id="reception-fieldset">
                         <legend>Will you attend the reception?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" id="attendReceptionYes"
+                        <label><input type="radio" id="attendReceptionYes"
                                 name="AttendReception" value="Yes" checked /> Yes</label>
                         <label><input type="radio" id="attendReceptionNo" name="AttendReception" value="No" />
                             No</label>
                     </fieldset>
 
-                    <label for="guestCount">Total guests attending</label>
-                    <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required />
 
                     <fieldset>
                         <legend>Are you vegetarian?</legend>
-                        <label style="margin-right: 16px;"><input type="radio" name="Vegetarian" value="No" checked />
+                        <label><input type="radio" name="Vegetarian" value="No" checked />
                             No</label>
                         <label><input type="radio" name="Vegetarian" value="Yes" /> Yes</label>
                     </fieldset>

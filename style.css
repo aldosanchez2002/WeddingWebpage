@@ -145,7 +145,22 @@ textarea {
 fieldset {
   border: 0;
   padding: 0;
-  margin: 10px 0
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+fieldset label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 24px;
+  margin-top: 0;
+}
+
+#rsvp-form fieldset {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 legend {
