@@ -10,7 +10,9 @@ const RSVP = (function () {
 
   // ===== CONFIG =====
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec";
+    'https://script.google.com/macros/s/' +
+    'AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA' +
+    '/exec';
 
   // Helper: get query param
   function getQueryParam(name) {
@@ -138,8 +140,10 @@ const RSVP = (function () {
         ev.preventDefault();
 
         const guestCount = parseInt(guestCountInput.value || 0, 10);
-        const attendCeremony = document.getElementById('attendCeremony').checked;
-        const attendReception = document.getElementById('attendReception').checked;
+        const ceremonyEl = document.getElementById('attendCeremony');
+        const attendCeremony = ceremonyEl.checked;
+        const receptionEl = document.getElementById('attendReception');
+        const attendReception = receptionEl.checked;
 
         if (guestCount < 0 || guestCount > max) {
           formMsg.textContent = `Guest count must be between 0 and ${max}.`;
@@ -151,6 +155,8 @@ const RSVP = (function () {
           return;
         }
 
+        const vegetarianSelector = 'input[name="Vegetarian"]:checked';
+        const vegetarianInput = document.querySelector(vegetarianSelector);
         const payload = {
           UniqueCode: codeHidden.value,
           GuestGroupName: groupHidden.value,
@@ -158,7 +164,7 @@ const RSVP = (function () {
           AttendCeremony: attendCeremony ? "Yes" : "No",
           AttendReception: attendReception ? "Yes" : "No",
           GuestCount: guestCountInput.value,
-          Vegetarian: document.querySelector('input[name="Vegetarian"]:checked').value,
+          Vegetarian: vegetarianInput.value,
           Notes: document.getElementById('notes').value
         };
 
