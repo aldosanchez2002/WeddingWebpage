@@ -30,7 +30,7 @@ const RSVP = (function () {
     } catch (err) {
       const bin = atob(b64);
       const bytes = new Uint8Array(bin.length);
-      for (let byteIndex = 0; byteIndex < bin.length; byteIndex++) bytes[byteIndex] = bin.charCodeAt(byteIndex);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
       const decoded = new TextDecoder('utf-8').decode(bytes);
       return JSON.parse(decoded);
     }
@@ -73,13 +73,13 @@ const RSVP = (function () {
     const code = getQueryParam('code');
 
     if (!code) {
-      // If no code is present, we are already showing the #lookup form
-      // due to the HTML change, so we just exit the function.
+      loading.textContent = 'Please enter your invitation code.';
+      hide(loading);
+      show(document.getElementById('lookup'));
       return;
     }
 
     hide(document.getElementById('lookup'));
-    show(loading);
 
     try {
       const guestList = await fetchGuestList(cfg.guestlistPath);
@@ -113,17 +113,25 @@ const RSVP = (function () {
 
       // Ceremony invitation
       const ceremonyFieldset = document.getElementById('ceremony-fieldset');
+      const ceremonyYes = document.getElementById('attendCeremonyYes');
+      const ceremonyNo = document.getElementById('attendCeremonyNo');
       const isInvitedToCeremony = entry.InvitedToCeremony === true;
 
       if (!isInvitedToCeremony) {
+        // Hide and lock ceremony RSVP if not invited
         hide(ceremonyFieldset);
-        document.getElementById('attendCeremony').checked = false;
+        if (ceremonyYes) ceremonyYes.disabled = true;
+        if (ceremonyNo) {
+          ceremonyNo.checked = true;
+          ceremonyNo.disabled = true;
+        }
       }
       // Guest limit
       const max = parseInt(entry.MaxAllowedGuests || 1, 10);
+      const initialGuests = Math.min(max, Math.max(0, 1));
       guestCountInput.setAttribute('min', '0');
       guestCountInput.setAttribute('max', String(max));
-      guestCountInput.value = Math.min(1, max);
+      guestCountInput.value = initialGuests;
       guestCountInput.dataset.maxGuests = String(max);
 
       // Guest count validation
@@ -148,10 +156,11 @@ const RSVP = (function () {
         ev.preventDefault();
 
         const guestCount = parseInt(guestCountInput.value || 0, 10);
-        const ceremonyEl = document.getElementById('attendCeremony');
-        const attendCeremony = ceremonyEl.checked;
-        const receptionEl = document.getElementById('attendReception');
-        const attendReception = receptionEl.checked;
+        const ceremonyChoice = document.querySelector('input[name="AttendCeremony"]:checked');
+        const receptionChoice = document.querySelector('input[name="AttendReception"]:checked');
+        const attendCeremony = ceremonyChoice ? ceremonyChoice.value === "Yes" : false;
+        const attendReception = receptionChoice ? receptionChoice.value === "Yes" : false;
+        const vegetarianInput = document.querySelector('input[name="Vegetarian"]:checked');
 
         if (guestCount < 0 || guestCount > max) {
           formMsg.textContent = `Guest count must be between 0 and ${max}.`;
@@ -163,31 +172,30 @@ const RSVP = (function () {
           return;
         }
 
-        const vegetarianSelector = 'input[name="Vegetarian"]:checked';
-        const vegetarianInput = document.querySelector(vegetarianSelector);
-        if (!vegetarianInput) {
-          formMsg.textContent = 'Please select a vegetarian preference.';
-          return;
-        }
         const payload = {
           UniqueCode: codeHidden.value,
           GroupName: groupHidden.value,
           AttendCeremony: attendCeremony ? "Yes" : "No",
           AttendReception: attendReception ? "Yes" : "No",
           GuestCount: guestCountInput.value,
-          Vegetarian: vegetarianInput.value,
+          Vegetarian: vegetarianInput ? vegetarianInput.value : "No",
           Notes: document.getElementById('notes').value
         };
 
+        formMsg.textContent = "Submitting...";
+
         try {
-          const res = await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            body: JSON.stringify(payload),
-            redirect: "follow",
-            headers: {
-              "Content-Type": "text/plain;charset=utf-8"
+          const res = await fetch(
+            "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec",
+            {
+              method: "POST",
+              body: JSON.stringify(payload),
+              redirect: "follow",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              }
             }
-          });
+          );
 
           if (res.ok) {
             formMsg.textContent = "✅ Thank you! Your RSVP has been recorded.";
@@ -201,7 +209,7 @@ const RSVP = (function () {
         }
       });
 
-      notFound.textContent = "Error loading invitation data.";
+    } catch (err) {
       console.error(err);
       hide(loading);
       if (notFound) {
