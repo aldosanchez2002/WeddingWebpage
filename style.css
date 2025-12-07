@@ -124,16 +124,6 @@ body {
   flex-wrap: wrap
 }
 
-.event-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px
-}
-
-.event h4 {
-  margin: 0 0 6px 0
-}
-
 .rsvp-card {
   background: var(--card-bg);
   padding: 18px;
@@ -256,17 +246,6 @@ label {
   .hero-img {
     height: 420px;
   }
-}
-
-.save-the-date-heading {
-  font-family: Georgia, serif;
-  font-size: 1.5rem;
-  font-weight: 400;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #777;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
 }
 
 .registry-message {
