@@ -10,7 +10,7 @@ const RSVP = (function () {
 
   // ===== CONFIG =====
   const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec"
+    "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec";
 
   // Helper: get query param
   function getQueryParam(name) {
@@ -171,11 +171,17 @@ const RSVP = (function () {
         formMsg.textContent = "Submitting...";
 
         try {
-          const res = await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
+          const res = await fetch(
+            "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec",
+            {
+              method: "POST",
+              body: JSON.stringify(payload),
+              redirect: "follow",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+              }
+            }
+          );
 
           if (res.ok) {
             formMsg.textContent = "✅ Thank you! Your RSVP has been recorded.";
