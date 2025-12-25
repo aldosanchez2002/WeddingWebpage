@@ -54,7 +54,7 @@ body {
 }
 
 .couple-names-text {
-  font-family: 'EB Garamond', serif;
+  font-family: 'EB Garamond', serif !important;
 }
 
 .date-location {
