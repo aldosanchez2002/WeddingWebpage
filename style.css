@@ -1,4 +1,6 @@
 /* style.css - simple elegant responsive styles */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
+
 :root {
   --max-width: 980px;
   --accent: #5b6cff;
@@ -52,7 +54,7 @@ body {
 }
 
 .couple-names-text {
-  font-family: Garamond, Georgia, serif;
+  font-family: 'EB Garamond', serif;
 }
 
 .date-location {
