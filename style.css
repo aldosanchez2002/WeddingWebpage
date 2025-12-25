@@ -51,6 +51,10 @@ body {
   letter-spacing: 0.6px
 }
 
+.couple-names-text {
+  font-family: Garamond, Georgia, serif;
+}
+
 .date-location {
   margin: 6px 0 0;
   color: var(--muted)
