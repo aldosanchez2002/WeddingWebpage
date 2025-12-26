@@ -41,6 +41,7 @@ body {
 /* Typography */
 .couple-names,
 .big-date,
+.hero-date,
 h1,
 h2,
 h3,
@@ -50,12 +51,29 @@ h4 {
   margin: 0;
 }
 
+.couple-names {
+  font-size: 32px;
+  letter-spacing: 0.02em;
+  margin-bottom: 0;
+}
 
 .big-date {
   font-size: 28px;
   margin: 8px 0;
 }
 
+/* Header & Nav */
+.site-header {
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 24px 0;
+  text-align: center;
+}
+
+.date-location {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
 
 .top-nav {
   display: flex;
@@ -80,9 +98,10 @@ h4 {
   margin-left: auto;
   padding: 10px 18px;
   border-radius: 8px;
+  white-space: nowrap;
 }
 
-/* Cards & Components */
+/* Cards & Hero Section */
 .card,
 .rsvp-card {
   background: var(--card-bg);
@@ -92,18 +111,9 @@ h4 {
   margin-bottom: 24px;
 }
 
-.hero-img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
 .hero-section {
   text-align: center;
   padding: 60px 40px;
-  /* Increased padding for breathing room */
 }
 
 .sub-header {
@@ -118,8 +128,6 @@ h4 {
 
 .hero-date {
   font-size: 48px;
-  /* High contrast size for the date */
-  font-family: var(--font-serif);
   margin-bottom: 8px;
   color: var(--text);
 }
@@ -142,62 +150,29 @@ h4 {
 .hero-img {
   width: 100%;
   height: auto;
-  max-height: 500px;
   display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
   transition: transform 0.5s ease;
 }
 
 .hero-lead {
-  font-family: var(--font-sans);
   font-size: 16px;
-  color: var(--text);
   max-width: 500px;
-  margin: 0 auto 32px auto;
+  margin: 0 auto 32px;
   opacity: 0.8;
 }
 
-/* Buttons */
-.btn-group {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: inline-block;
-  font-family: var(--font-ui);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 14px;
-  font-weight: 700;
-  background: var(--accent);
-  color: #fff;
-  padding: 14px 24px;
-  border-radius: 12px;
-  text-decoration: none;
-  border: 0;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn.alt {
-  background: #eee;
-  color: #222;
-}
-
-/* Info Section (Prettier Version) */
+/* Info Section */
 .info-section {
   text-align: center;
 }
 
 .info-section h3 {
   margin-bottom: 32px;
-  letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: 1.2rem;
+  letter-spacing: 0.05em;
 }
 
 .info-grid {
@@ -213,9 +188,7 @@ h4 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   gap: 4px;
-  text-align: center;
 }
 
 .info-section .info-icon {
@@ -240,7 +213,7 @@ h4 {
   color: var(--text);
 }
 
-/* Registry & QR codes */
+/* Registry & QR */
 .qr-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -254,7 +227,6 @@ h4 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   text-decoration: none;
   color: inherit;
 }
@@ -267,7 +239,6 @@ h4 {
   padding: 12px;
   border-radius: var(--radius);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: block;
   transition: transform 0.2s ease;
 }
 
@@ -281,17 +252,43 @@ h4 {
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 700;
-  text-align: center;
 }
 
-/* Forms */
+/* Buttons & Forms */
+.btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--accent);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn.alt {
+  background: #eee;
+  color: #222;
+}
+
 input,
 textarea {
   width: 100%;
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #e1e4dc;
-  font-family: var(--font-sans);
   margin-top: 8px;
 }
 
@@ -303,133 +300,129 @@ fieldset {
 
 legend {
   font-weight: 600;
-  font-family: var(--font-sans);
 }
 
-/* Responsive */
-/* 1. Fix Heading Overflow on Mobile */
+/* Responsive Logic */
+@media (max-width: 760px) {
+  .top-nav {
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .top-nav .cta {
+    margin-left: 0;
+    width: auto;
+    padding: 8px 12px;
+  }
+
+  .top-nav a {
+    font-size: 11px;
+  }
+}
+
 @media (max-width: 600px) {
   .hero-date {
     font-size: 32px !important;
-    /* Prevents text from breaking out of cards */
   }
 
   .couple-names {
     font-size: 24px;
   }
 
-  /* 2. Standardize Card Spacing */
   .card {
     padding: 24px 16px;
-    /* Reduced side padding for more content space */
     margin-bottom: 16px;
   }
 
-  /* 3. Stack the Button Group */
   .btn-group {
     flex-direction: column;
     width: 100%;
   }
 
-  .top-nav a:not(.cta) {
-    font-size: 12px;
-    /* Slightly smaller text for links */
-  }
-
   .btn-group .btn {
     width: 100%;
-    /* Makes buttons easy to tap on mobile */
     text-align: center;
   }
 
-  /* 4. Fix Navigation Stacking */
+  .top-nav.container {
+    padding-left: 18px;
+    padding-right: 18px;
+    justify-content: flex-start;
+  }
+
   .top-nav {
-    justify-content: center;
+    display: flex !important;
+    flex-direction: row !important;
+    /* Forces single row */
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 16px;
     gap: 12px;
   }
 
+  .top-nav a:not(.cta) {
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
   .top-nav .cta {
+    margin-left: auto !important;
+    /* Pushes to the far right */
     padding: 8px 14px;
     font-size: 11px;
+    width: auto !important;
+    /* Prevents full-width stacking */
+    text-align: center;
   }
 
   .info-grid {
     flex-direction: column;
-    gap: 32px;
+    gap: 20px;
+  }
+
+  .info-item {
+    flex-direction: row;
+    text-align: left;
+    margin: 0 auto;
+    gap: 12px;
+  }
+
+  .info-section .info-icon {
+    margin-bottom: 0;
+    font-size: 50px !important;
+  }
+
+  .info-item div {
+    display: flex;
+    flex-direction: column;
   }
 }
 
-/* 5. Fix Image Aspect Ratios */
-.hero-img {
-  height: auto;
-  /* Ensures image isn't squashed */
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.site-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  /* Reduced from 48px to 24px top and bottom */
-  padding: 24px 0;
+.registry-intro {
+  max-width: 600px;
+  margin: 0 auto 32px;
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.6;
   text-align: center;
 }
 
-.couple-names {
-  font-size: 32px;
-  letter-spacing: 0.02em;
-  /* Ensure no bottom margin is pushing the date away */
-  margin-bottom: 0;
+.registry-section h3 {
+  text-align: center;
+  margin-bottom: 16px;
 }
 
-.date-location {
-  /* Reduced top margin to bring it closer to the names */
-  margin: 4px 0 0;
-  color: var(--muted);
-}
-
-/* Ensure the navigation container has consistent side padding */
-.top-nav.container {
-  padding-left: 24px;
-  /* Matches your global container padding */
-  padding-right: 24px;
+.info-text {
   display: flex;
-  gap: 24px;
+  flex-direction: column;
+  text-align: left;
+}
+
+/* Ensure icons and text align in a row on all screens */
+.info-item {
+  display: flex;
+  flex-direction: row;
   align-items: center;
-}
-
-/* On mobile, ensure the Home link doesn't touch the edge */
-@media (max-width: 600px) {
-  .top-nav.container {
-    padding-left: 18px;
-    /* Slightly tighter for mobile but still safe */
-    padding-right: 18px;
-    justify-content: flex-start;
-    /* Keeps 'Home' on the left with padding */
-  }
-}
-
-@media(max-width:760px) {
-
-  /* This ensures the RSVP button stays inline instead of jumping to a new row */
-  .top-nav {
-    justify-content: space-between;
-    /* Spreads links and RSVP apart */
-    gap: 10px;
-    /* Reduces gap so they fit on one line */
-  }
-
-  .top-nav .cta {
-    margin-left: 0;
-    width: auto;
-    /* Change from 100% to auto */
-    padding: 8px 12px;
-    /* Slightly smaller padding to save space */
-    text-align: center;
-  }
-
-  .top-nav a {
-    font-size: 11px;
-    /* Smaller font to ensure everything fits on one line */
-  }
+  gap: 15px;
+  justify-content: center;
 }
