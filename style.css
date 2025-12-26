@@ -3,10 +3,10 @@
 
 :root {
   --max-width: 980px;
-  --accent: #5b6cff;
-  --muted: #666;
-  --card-bg: #fff;
-  --page-bg: #f7f8fb;
+  --accent: #ee653b;
+  --muted: #d2b316;
+  --card-bg: #6926b6;
+  --page-bg: #82b06a;
   --radius: 12px;
   --container-pad: 18px;
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
