@@ -50,29 +50,18 @@ h4 {
   margin: 0;
 }
 
-.couple-names {
-  font-size: 32px;
-  letter-spacing: 0.02em;
-}
 
 .big-date {
   font-size: 28px;
   margin: 8px 0;
 }
 
-/* Header & Nav */
-.site-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 48px 0;
-  text-align: center;
-}
 
 .top-nav {
   display: flex;
   gap: 24px;
   align-items: center;
-  padding: 12px 0;
+  padding: 12px 24px;
   flex-wrap: wrap;
 }
 
@@ -86,9 +75,9 @@ h4 {
 }
 
 .top-nav .cta {
-  margin-left: auto;
   background: var(--accent);
   color: #fff !important;
+  margin-left: auto;
   padding: 10px 18px;
   border-radius: 8px;
 }
@@ -318,21 +307,129 @@ legend {
 }
 
 /* Responsive */
-@media(max-width:760px) {
-  .top-nav .cta {
-    margin-left: 0;
+/* 1. Fix Heading Overflow on Mobile */
+@media (max-width: 600px) {
+  .hero-date {
+    font-size: 32px !important;
+    /* Prevents text from breaking out of cards */
+  }
+
+  .couple-names {
+    font-size: 24px;
+  }
+
+  /* 2. Standardize Card Spacing */
+  .card {
+    padding: 24px 16px;
+    /* Reduced side padding for more content space */
+    margin-bottom: 16px;
+  }
+
+  /* 3. Stack the Button Group */
+  .btn-group {
+    flex-direction: column;
     width: 100%;
+  }
+
+  .top-nav a:not(.cta) {
+    font-size: 12px;
+    /* Slightly smaller text for links */
+  }
+
+  .btn-group .btn {
+    width: 100%;
+    /* Makes buttons easy to tap on mobile */
     text-align: center;
   }
 
-  .hero-img {
-    height: 280px;
+  /* 4. Fix Navigation Stacking */
+  .top-nav {
+    justify-content: center;
+    gap: 12px;
   }
-}
 
-@media (max-width: 600px) {
+  .top-nav .cta {
+    padding: 8px 14px;
+    font-size: 11px;
+  }
+
   .info-grid {
     flex-direction: column;
     gap: 32px;
+  }
+}
+
+/* 5. Fix Image Aspect Ratios */
+.hero-img {
+  height: auto;
+  /* Ensures image isn't squashed */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.site-header {
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  /* Reduced from 48px to 24px top and bottom */
+  padding: 24px 0;
+  text-align: center;
+}
+
+.couple-names {
+  font-size: 32px;
+  letter-spacing: 0.02em;
+  /* Ensure no bottom margin is pushing the date away */
+  margin-bottom: 0;
+}
+
+.date-location {
+  /* Reduced top margin to bring it closer to the names */
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+/* Ensure the navigation container has consistent side padding */
+.top-nav.container {
+  padding-left: 24px;
+  /* Matches your global container padding */
+  padding-right: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+/* On mobile, ensure the Home link doesn't touch the edge */
+@media (max-width: 600px) {
+  .top-nav.container {
+    padding-left: 18px;
+    /* Slightly tighter for mobile but still safe */
+    padding-right: 18px;
+    justify-content: flex-start;
+    /* Keeps 'Home' on the left with padding */
+  }
+}
+
+@media(max-width:760px) {
+
+  /* This ensures the RSVP button stays inline instead of jumping to a new row */
+  .top-nav {
+    justify-content: space-between;
+    /* Spreads links and RSVP apart */
+    gap: 10px;
+    /* Reduces gap so they fit on one line */
+  }
+
+  .top-nav .cta {
+    margin-left: 0;
+    width: auto;
+    /* Change from 100% to auto */
+    padding: 8px 12px;
+    /* Slightly smaller padding to save space */
+    text-align: center;
+  }
+
+  .top-nav a {
+    font-size: 11px;
+    /* Smaller font to ensure everything fits on one line */
   }
 }
