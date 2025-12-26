@@ -154,8 +154,6 @@ legend {
   display: none !important;
 }
 
-/* Update these sections in style.css */
-
 .qr-box {
   display: flex;
   flex-direction: column;
@@ -173,18 +171,15 @@ legend {
 
 .qr-grid {
   display: grid;
-  /* Forces 2 columns on mobile and desktop */
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   max-width: 400px;
-  /* Prevents boxes from becoming too large on desktop */
   margin: 0 auto;
 }
 
 .qr-box img {
   width: 100%;
   aspect-ratio: 1 / 1;
-  /* Forces the box to be a perfect square */
   object-fit: contain;
   background: #fff;
   padding: 12px;
