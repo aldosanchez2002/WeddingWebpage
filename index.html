@@ -14,10 +14,11 @@
             theme: {
                 extend: {
                     colors: {
-                        page: '#FAF8F5',
+                        page: 'rgb(241, 235, 235)',
                         text: '#3A3836',
                         accent: '#C4B4A4',
                         card: '#FFFFFF',
+                        wedding: 'rgb(170, 180, 156)'
                     },
                     fontFamily: {
                         serif: ['"EB Garamond"', 'serif'],
@@ -27,7 +28,7 @@
             }
         }
     </script>
-    <style>
+    <style type="text/tailwindcss">
         body {
             background-color: theme('colors.page');
             color: theme('colors.text');
@@ -38,25 +39,15 @@
         }
 
         /* Timeline styling */
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 8px;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: theme('colors.accent');
-        }
-
         .timeline-item::after {
             content: '';
             position: absolute;
-            left: 5px;
-            top: 20px;
-            bottom: -20px;
+            left: 15px;
+            top: 36px;
+            bottom: -8px;
             width: 2px;
             background-color: #E5E0D8;
+            z-index: 0;
         }
 
         .timeline-item:last-child::after {
@@ -65,18 +56,18 @@
     </style>
 </head>
 
-<body class="font-sans antialiased flex flex-col min-h-screen">
+<body class="font-sans antialiased flex flex-col min-h-screen bg-page text-text">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-page/90 backdrop-blur-md border-b border-[#E5E0D8]">
+    <nav class="fixed w-full z-50 bg-wedding text-white shadow-md">
         <div
             class="max-w-5xl mx-auto px-4 py-3 md:px-6 md:py-4 flex flex-wrap justify-center gap-3 md:gap-6 text-xs md:text-sm uppercase tracking-widest font-medium">
-            <a href="#home" class="hover:text-accent transition-colors">Home</a>
-            <a href="#story" class="hover:text-accent transition-colors">Our Story</a>
-            <a href="#schedule" class="hover:text-accent transition-colors">Schedule</a>
-            <a href="#details" class="hover:text-accent transition-colors">Details</a>
-            <a href="#registry" class="hover:text-accent transition-colors">Registry</a>
-            <a href="#rsvp" class="hover:text-accent transition-colors font-bold">RSVP</a>
+            <a href="#home" class="hover:opacity-80 transition-opacity">Home</a>
+            <a href="#story" class="hover:opacity-80 transition-opacity">Our Story</a>
+            <a href="#schedule" class="hover:opacity-80 transition-opacity">Schedule</a>
+            <a href="#details" class="hover:opacity-80 transition-opacity">Details</a>
+            <a href="#registry" class="hover:opacity-80 transition-opacity">Registry</a>
+            <a href="#rsvp" class="hover:opacity-80 transition-opacity font-bold">RSVP</a>
         </div>
     </nav>
 
@@ -91,7 +82,7 @@
             Paso, TX</p>
 
         <a href="https://www.google.com/maps?q=106+W+Mills+Ave,+El+Paso,+TX+79901" target="_blank"
-            class="bg-text text-white px-6 py-3 md:px-8 md:py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-accent transition-colors mb-12 md:mb-16">
+            class="bg-wedding text-white px-6 py-3 md:px-8 md:py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity mb-12 md:mb-16 shadow-md">
             Directions
         </a>
 
@@ -112,10 +103,12 @@
     </section>
 
     <!-- Our Story Section -->
-    <section id="story" class="py-16 md:py-24 px-4 md:px-6 bg-white">
+    <section id="story" class="py-16 md:py-24 px-4 md:px-6">
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div class="order-2 md:order-1">
-                <h2 class="font-serif text-4xl md:text-5xl mb-4 md:mb-6 text-center md:text-left">Our Love Story</h2>
+                <div class="text-center md:text-left mb-6">
+                    <h2 class="font-serif text-4xl md:text-5xl">Our Love Story</h2>
+                </div>
                 <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-center md:text-left">
                     Welcome to our beginning. We are so thrilled to share this special milestone with our favorite
                     people.
@@ -140,50 +133,76 @@
     <!-- Schedule Section -->
     <section id="schedule" class="py-16 md:py-24 px-4 md:px-6">
         <div class="max-w-3xl mx-auto">
-            <h2 class="font-serif text-4xl md:text-5xl mb-12 md:mb-16 text-center">Schedule</h2>
+            <div class="text-center mb-12 md:mb-16">
+                <h2 class="font-serif text-4xl md:text-5xl">Schedule</h2>
+            </div>
             <div class="relative pl-2 sm:pl-6 md:pl-0">
-                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon1.png" alt="Ceremony" class="w-8 h-8 object-contain">
+                    </div>
                     <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">04:00 PM</p>
                 </div>
-                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
-                    <h3 class="font-serif text-2xl mb-1">Cocktail Hour</h3>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon2.png" alt="Cocktail" class="w-8 h-8 object-contain">
+                    </div>
+                    <h3 class="font-serif text-2xl mb-1">Cocktail</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">05:00 PM</p>
                 </div>
-                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon3.png" alt="Dinner" class="w-8 h-8 object-contain">
+                    </div>
                     <h3 class="font-serif text-2xl mb-1">Dinner</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">06:30 PM</p>
                 </div>
-                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
-                    <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon4.png" alt="Party" class="w-8 h-8 object-contain">
+                    </div>
+                    <h3 class="font-serif text-2xl mb-1">Party</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">08:00 PM</p>
                 </div>
-                <div class="md:w-1/2 md:ml-auto relative timeline-item pl-8">
-                    <h3 class="font-serif text-2xl mb-1">Party</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">08:30 PM</p>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon5.png" alt="Cake Cutting" class="w-8 h-8 object-contain">
+                    </div>
+                    <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">09:30 PM</p>
+                </div>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pl-12">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                        <img src="gallery/icon6.png" alt="Homeline" class="w-8 h-8 object-contain">
+                    </div>
+                    <h3 class="font-serif text-2xl mb-1">Homeline</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">11:00 PM</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Details Section -->
-    <section id="details" class="py-16 md:py-24 px-4 md:px-6 bg-white">
+    <section id="details" class="py-16 md:py-24 px-4 md:px-6">
         <div class="max-w-5xl mx-auto text-center">
-            <h2 class="font-serif text-4xl md:text-5xl mb-8 md:mb-12">Details</h2>
+            <div class="mb-12">
+                <h2 class="font-serif text-4xl md:text-5xl">Details</h2>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-                <div class="p-6 bg-page rounded-sm">
+                <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
                     <h3 class="font-serif text-xl mb-2">Parking</h3>
                     <p class="text-sm text-gray-600">Onsite Valet parking is available at the hotel.</p>
                 </div>
-                <div class="p-6 bg-page rounded-sm">
+                <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
                     <h3 class="font-serif text-xl mb-2">Dress Code</h3>
                     <p class="text-sm text-gray-600">Formal attire. Please dress to impress for our special night.</p>
                 </div>
-                <div class="p-6 bg-page rounded-sm">
+                <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
                     <h3 class="font-serif text-xl mb-2">Vision Board</h3>
                     <p class="text-sm text-gray-600">Check your invitation for color palette inspiration.</p>
                 </div>
-                <div class="p-6 bg-page rounded-sm">
+                <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
                     <h3 class="font-serif text-xl mb-2">Accommodations</h3>
                     <p class="text-sm text-gray-600">Discount codes for rooms are provided in your formal invite.</p>
                 </div>
@@ -193,11 +212,14 @@
 
     <!-- Registry Section -->
     <section id="registry" class="py-16 md:py-24 px-4 md:px-6 text-center">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="font-serif text-4xl md:text-5xl mb-4 md:mb-6">Gift Registry</h2>
+        <div
+            class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
+            <div class="mb-8">
+                <h2 class="font-serif text-4xl md:text-5xl">Gift Registry</h2>
+            </div>
             <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6">Your presence is truly the best gift we could
                 ask for!</p>
-            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed">
+            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed max-w-xl mx-auto">
                 Since we're already settled in our home out of state, we've decided not to have a traditional gift
                 registry.
                 If you wish to bless us with a gift, cash gifts are incredibly appreciated.
@@ -206,30 +228,31 @@
             <div class="flex justify-center">
                 <a href="https://enroll.zellepay.com/qr-codes?data=eyJuYW1lIjoiQUxETyIsImFjdGlvbiI6InBheW1lbnQiLCJ0b2tlbiI6IjkxNTUwMzQ2OTYifQ=="
                     target="_blank"
-                    class="flex flex-col items-center justify-center bg-white p-6 md:p-8 rounded-sm shadow-sm hover:shadow-md transition-shadow w-48 md:w-64">
-                    <img src="assets/qr-zelle.png" alt="Zelle" class="w-32 h-32 md:w-40 md:h-40 object-contain mb-4">
-                    <p class="uppercase tracking-widest text-sm md:text-base font-bold text-gray-800">Zelle</p>
+                    class="flex flex-col items-center justify-center bg-white p-6 md:p-8 rounded-sm shadow-sm hover:shadow-md transition-shadow border border-[#E5E0D8] w-48 md:w-64">
+                    <img src="assets/qr-zelle.png" alt="Zelle" class="w-32 h-32 md:w-40 md:h-40 object-contain">
                 </a>
             </div>
         </div>
     </section>
 
     <!-- RSVP Section -->
-    <section id="rsvp" class="py-16 md:py-24 px-4 md:px-6 bg-white border-t border-[#E5E0D8]">
-        <div class="max-w-2xl mx-auto bg-page p-6 md:p-12 rounded-sm shadow-sm">
-            <h2 class="font-serif text-4xl md:text-5xl mb-6 md:mb-8 text-center">RSVP</h2>
+    <section id="rsvp" class="py-16 md:py-24 px-4 md:px-6 border-t border-[#E5E0D8]">
+        <div class="max-w-2xl mx-auto bg-white p-6 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
+            <div class="text-center mb-8">
+                <h2 class="font-serif text-4xl md:text-5xl">RSVP</h2>
+            </div>
 
             <div id="rsvp-root">
                 <!-- Lookup Form -->
                 <div id="lookup">
-                    <h3 class="font-serif text-2xl mb-4">Have an invitation code?</h3>
+                    <h3 class="font-serif text-2xl mb-4 text-center">Have an invitation code?</h3>
                     <form id="lookup-form" class="flex flex-col gap-4">
-                        <label for="inviteCode" class="text-sm">Enter the personalized code from your
-                            invitation.</label>
+                        <label for="inviteCode" class="text-sm font-bold uppercase tracking-widest text-center">Enter
+                            the personalized code from your invitation.</label>
                         <input id="inviteCode" name="code" type="text" required placeholder="e.g. ABC123"
-                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent">
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding text-center bg-page">
                         <button type="button" onclick="handleLookup()"
-                            class="bg-text text-white p-3 rounded-sm uppercase tracking-widest text-sm hover:bg-accent transition-colors mt-2">Enter</button>
+                            class="bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-sm hover:opacity-90 transition-opacity mt-2 shadow-sm">Enter</button>
                     </form>
                 </div>
 
@@ -241,7 +264,8 @@
                         or contact us at <a href="mailto:aldo.y.isabella@gmail.com"
                             class="underline">aldo.y.isabella@gmail.com</a>.</p>
                     <button type="button" onclick="resetLookup()"
-                        class="mt-6 text-sm underline uppercase tracking-widest text-gray-500">Try Again</button>
+                        class="mt-6 text-sm underline uppercase tracking-widest text-gray-500 hover:text-wedding transition-colors">Try
+                        Again</button>
                 </div>
 
                 <!-- Main RSVP Form -->
@@ -255,43 +279,46 @@
                         <label for="guestCount" class="font-bold text-xs md:text-sm uppercase tracking-widest">Total
                             guests attending</label>
                         <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required
-                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent">
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page">
                     </div>
 
-                    <fieldset id="ceremony-fieldset" class="border border-gray-200 p-4 rounded-sm">
-                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Will you attend the
-                            ceremony?</legend>
+                    <fieldset id="ceremony-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
+                        <legend
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            Will you attend the ceremony?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
                                     id="attendCeremonyYes" name="AttendCeremony" value="Yes" checked
-                                    class="accent-text"> Yes</label>
+                                    class="accent-wedding"> Yes</label>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendCeremonyNo" name="AttendCeremony" value="No" class="accent-text">
+                                    id="attendCeremonyNo" name="AttendCeremony" value="No" class="accent-wedding">
                                 No</label>
                         </div>
                     </fieldset>
 
-                    <fieldset id="reception-fieldset" class="border border-gray-200 p-4 rounded-sm">
-                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Will you attend the
-                            reception?</legend>
+                    <fieldset id="reception-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
+                        <legend
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            Will you attend the reception?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
                                     id="attendReceptionYes" name="AttendReception" value="Yes" checked
-                                    class="accent-text"> Yes</label>
+                                    class="accent-wedding"> Yes</label>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendReceptionNo" name="AttendReception" value="No" class="accent-text">
+                                    id="attendReceptionNo" name="AttendReception" value="No" class="accent-wedding">
                                 No</label>
                         </div>
                     </fieldset>
 
-                    <fieldset class="border border-gray-200 p-4 rounded-sm">
-                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Are you vegetarian?
-                        </legend>
+                    <fieldset class="border border-gray-200 p-4 rounded-sm bg-page">
+                        <legend
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            Are you vegetarian?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="Yes" class="accent-text"> Yes</label>
+                                    value="Yes" class="accent-wedding"> Yes</label>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="No" checked class="accent-text"> No</label>
+                                    value="No" checked class="accent-wedding"> No</label>
                         </div>
                     </fieldset>
 
@@ -300,14 +327,14 @@
                             (optional)</label>
                         <textarea id="notes" name="Notes" rows="3"
                             placeholder="Song requests, accessibility needs, etc."
-                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent"></textarea>
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page"></textarea>
                     </div>
 
                     <p id="form-msg" class="text-center font-bold text-sm"></p>
 
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
                         <button type="submit"
-                            class="w-full sm:flex-1 bg-text text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-accent transition-colors">Submit
+                            class="w-full sm:flex-1 bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity shadow-sm">Submit
                             RSVP</button>
                         <button type="button" id="cancelBtn" onclick="resetLookup()"
                             class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors">Cancel</button>
