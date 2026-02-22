@@ -1,83 +1,501 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aldo & Isabella — Wedding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        page: '#FAF8F5',
+                        text: '#3A3836',
+                        accent: '#C4B4A4',
+                        card: '#FFFFFF',
+                    },
+                    fontFamily: {
+                        serif: ['"EB Garamond"', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: theme('colors.page');
+            color: theme('colors.text');
+        }
 
-    <link rel="stylesheet" href="style.css" />
+        .hidden {
+            display: none !important;
+        }
+
+        /* Timeline styling */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: theme('colors.accent');
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 20px;
+            bottom: -20px;
+            width: 2px;
+            background-color: #E5E0D8;
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+    </style>
 </head>
 
-<body>
-    <header class="site-header">
-        <div class="container">
-            <h1 class="couple-names"><span class="couple-names-text">Aldo & Isabella</span></h1>
-            <p class="date-location">January 16, 2027 • El Paso, Texas</p>
+<body class="font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-page/90 backdrop-blur-md border-b border-[#E5E0D8]">
+        <div
+            class="max-w-5xl mx-auto px-4 py-3 md:px-6 md:py-4 flex flex-wrap justify-center gap-3 md:gap-6 text-xs md:text-sm uppercase tracking-widest font-medium">
+            <a href="#home" class="hover:text-accent transition-colors">Home</a>
+            <a href="#story" class="hover:text-accent transition-colors">Our Story</a>
+            <a href="#schedule" class="hover:text-accent transition-colors">Schedule</a>
+            <a href="#details" class="hover:text-accent transition-colors">Details</a>
+            <a href="#registry" class="hover:text-accent transition-colors">Registry</a>
+            <a href="#rsvp" class="hover:text-accent transition-colors font-bold">RSVP</a>
         </div>
-    </header>
-
-
-    <nav class="top-nav container">
-        <a href="index.html">Home</a>
-        <a href="gallery.html">Gallery</a>
-        <a href="registry.html">Registry</a>
-        <a href="rsvp.html" class="cta">RSVP</a>
     </nav>
 
-    <main class="container">
-        <section id="hero" class="card hero-section">
-            <span class="sub-header">Save the Date</span>
-            <h2 class="hero-date">January 16, 2027</h2>
-            <p class="hero-location">The Plaza Hotel at Pioneer Park • El Paso, Texas</p>
+    <!-- Home Section -->
+    <section id="home"
+        class="min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-6 pt-24 pb-12">
+        <h1 class="font-serif text-5xl sm:text-6xl md:text-8xl mb-4 md:mb-6">Aldo & Isabella</h1>
+        <img src="gallery/image1.png" alt="Aldo and Isabella"
+            class="w-full max-w-lg mx-auto h-48 sm:h-64 md:h-96 object-cover rounded-sm shadow-lg mb-6">
+        <p class="text-lg sm:text-xl md:text-2xl font-serif italic mb-2">January 16, 2027</p>
+        <p class="text-xs sm:text-sm md:text-md uppercase tracking-widest mb-8">The Plaza Hotel at Pioneer Park<br>El
+            Paso, TX</p>
 
-            <div class="hero-image-container">
-                <img src="assets/plaza.png" alt="The Plaza Hotel" class="hero-img" />
+        <a href="https://www.google.com/maps?q=106+W+Mills+Ave,+El+Paso,+TX+79901" target="_blank"
+            class="bg-text text-white px-6 py-3 md:px-8 md:py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-accent transition-colors mb-12 md:mb-16">
+            Directions
+        </a>
+
+        <div class="mt-4 md:mt-8 text-center">
+            <p class="font-serif text-xl md:text-2xl italic mb-4 md:mb-6">Let the Countdown begin</p>
+            <div id="countdown"
+                class="flex gap-3 sm:gap-4 md:gap-8 justify-center uppercase tracking-widest text-[10px] sm:text-xs font-bold">
+                <div class="flex flex-col items-center"><span id="days"
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Days</div>
+                <div class="flex flex-col items-center"><span id="hours"
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Hours</div>
+                <div class="flex flex-col items-center"><span id="mins"
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Minutes</div>
+                <div class="flex flex-col items-center"><span id="secs"
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Seconds</div>
             </div>
-
-            <p class="hero-lead">We’re so excited to celebrate our wedding with you!</p>
-
-            <div class="btn-group">
-                <a class="btn alt"
-                    href="https://www.google.com/maps?kgmid=/m/0b1d3_&hl=en-US&shndl=17&shem=damc,shrtsdl&kgs=098061cecd444897&um=1&ie=UTF-8&fb=1&gl=us&sa=X&geocode=KXMsNkjWWeeGMUFrPDVDFBG-&daddr=106+W+Mills+Ave,+El+Paso,+TX+79901"
-                    target="_blank">Directions</a>
-                <a class="btn" href="rsvp.html">RSVP Here</a>
-            </div>
-        </section>
-
-        <section class="card info-section">
-            <h3>Important Information</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <span class="info-icon">👔</span>
-                    <div class="info-text">
-                        <strong>Dress Code</strong>
-                        <span>Formal</span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <span class="info-icon">🚗</span>
-                    <div class="info-text">
-                        <strong>Parking</strong>
-                        <span>Onsite Valet</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="card">
-            <h3>Need an RSVP code?</h3>
-            <p>Use the personalized link you received or <a href="mailto:aldo.y.isabella@gmail.com">message us</a>.</p>
-            </ul>
-        </section>
-    </main>
-
-    <footer class="site-footer">
-        <div class="container">
-            <p><span class="couple-names-text">Aldo & Isabella</span> — January 16, 2027</p>
-
         </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section id="story" class="py-16 md:py-24 px-4 md:px-6 bg-white">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div class="order-2 md:order-1">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4 md:mb-6 text-center md:text-left">Our Love Story</h2>
+                <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-center md:text-left">
+                    Welcome to our beginning. We are so thrilled to share this special milestone with our favorite
+                    people.
+                    From our first date to this beautiful commitment, every moment has led us here.
+                </p>
+                <p class="text-base md:text-lg leading-relaxed text-gray-600 text-center md:text-left">
+                    We can't wait to celebrate our love story surrounded by the friends and family who mean the world to
+                    us.
+                </p>
+            </div>
+            <div class="order-1 md:order-2 grid grid-cols-2 gap-2 sm:gap-4">
+                <img src="gallery/image2.png" alt="Our Story 1"
+                    class="w-full h-32 sm:h-48 md:h-64 object-cover rounded-sm shadow-lg">
+                <img src="gallery/image3.png" alt="Our Story 2"
+                    class="w-full h-32 sm:h-48 md:h-64 object-cover rounded-sm shadow-lg">
+                <img src="gallery/image4.png" alt="Our Story 3"
+                    class="w-full h-40 sm:h-64 md:h-80 object-cover rounded-sm shadow-lg col-span-2">
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule" class="py-16 md:py-24 px-4 md:px-6">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-serif text-4xl md:text-5xl mb-12 md:mb-16 text-center">Schedule</h2>
+            <div class="relative pl-2 sm:pl-6 md:pl-0">
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                    <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">04:00 PM</p>
+                </div>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                    <h3 class="font-serif text-2xl mb-1">Cocktail Hour</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">05:00 PM</p>
+                </div>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                    <h3 class="font-serif text-2xl mb-1">Dinner</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">06:30 PM</p>
+                </div>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pb-8 md:pb-10 pl-8">
+                    <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">08:00 PM</p>
+                </div>
+                <div class="md:w-1/2 md:ml-auto relative timeline-item pl-8">
+                    <h3 class="font-serif text-2xl mb-1">Party</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">08:30 PM</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Details Section -->
+    <section id="details" class="py-16 md:py-24 px-4 md:px-6 bg-white">
+        <div class="max-w-5xl mx-auto text-center">
+            <h2 class="font-serif text-4xl md:text-5xl mb-8 md:mb-12">Details</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                <div class="p-6 bg-page rounded-sm">
+                    <h3 class="font-serif text-xl mb-2">Parking</h3>
+                    <p class="text-sm text-gray-600">Onsite Valet parking is available at the hotel.</p>
+                </div>
+                <div class="p-6 bg-page rounded-sm">
+                    <h3 class="font-serif text-xl mb-2">Dress Code</h3>
+                    <p class="text-sm text-gray-600">Formal attire. Please dress to impress for our special night.</p>
+                </div>
+                <div class="p-6 bg-page rounded-sm">
+                    <h3 class="font-serif text-xl mb-2">Vision Board</h3>
+                    <p class="text-sm text-gray-600">Check your invitation for color palette inspiration.</p>
+                </div>
+                <div class="p-6 bg-page rounded-sm">
+                    <h3 class="font-serif text-xl mb-2">Accommodations</h3>
+                    <p class="text-sm text-gray-600">Discount codes for rooms are provided in your formal invite.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registry Section -->
+    <section id="registry" class="py-16 md:py-24 px-4 md:px-6 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="font-serif text-4xl md:text-5xl mb-4 md:mb-6">Gift Registry</h2>
+            <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6">Your presence is truly the best gift we could
+                ask for!</p>
+            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed">
+                Since we're already settled in our home out of state, we've decided not to have a traditional gift
+                registry.
+                If you wish to bless us with a gift, cash gifts are incredibly appreciated.
+            </p>
+
+            <div class="flex justify-center">
+                <a href="https://enroll.zellepay.com/qr-codes?data=eyJuYW1lIjoiQUxETyIsImFjdGlvbiI6InBheW1lbnQiLCJ0b2tlbiI6IjkxNTUwMzQ2OTYifQ=="
+                    target="_blank"
+                    class="flex flex-col items-center justify-center bg-white p-6 md:p-8 rounded-sm shadow-sm hover:shadow-md transition-shadow w-48 md:w-64">
+                    <img src="assets/qr-zelle.png" alt="Zelle" class="w-32 h-32 md:w-40 md:h-40 object-contain mb-4">
+                    <p class="uppercase tracking-widest text-sm md:text-base font-bold text-gray-800">Zelle</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- RSVP Section -->
+    <section id="rsvp" class="py-16 md:py-24 px-4 md:px-6 bg-white border-t border-[#E5E0D8]">
+        <div class="max-w-2xl mx-auto bg-page p-6 md:p-12 rounded-sm shadow-sm">
+            <h2 class="font-serif text-4xl md:text-5xl mb-6 md:mb-8 text-center">RSVP</h2>
+
+            <div id="rsvp-root">
+                <!-- Lookup Form -->
+                <div id="lookup">
+                    <h3 class="font-serif text-2xl mb-4">Have an invitation code?</h3>
+                    <form id="lookup-form" class="flex flex-col gap-4">
+                        <label for="inviteCode" class="text-sm">Enter the personalized code from your
+                            invitation.</label>
+                        <input id="inviteCode" name="code" type="text" required placeholder="e.g. ABC123"
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent">
+                        <button type="button" onclick="handleLookup()"
+                            class="bg-text text-white p-3 rounded-sm uppercase tracking-widest text-sm hover:bg-accent transition-colors mt-2">Enter</button>
+                    </form>
+                </div>
+
+                <p id="loading" class="hidden text-center text-gray-600 py-8">Looking up your invitation...</p>
+
+                <div id="not-found" class="hidden text-center py-8">
+                    <h3 class="font-serif text-2xl mb-2 text-red-600">Invitation not found</h3>
+                    <p class="text-sm text-gray-600">Sorry, we could not find your invitation code. Please double-check
+                        or contact us at <a href="mailto:aldo.y.isabella@gmail.com"
+                            class="underline">aldo.y.isabella@gmail.com</a>.</p>
+                    <button type="button" onclick="resetLookup()"
+                        class="mt-6 text-sm underline uppercase tracking-widest text-gray-500">Try Again</button>
+                </div>
+
+                <!-- Main RSVP Form -->
+                <form id="rsvp-form" class="hidden flex flex-col gap-6">
+                    <p id="welcome" class="font-serif text-2xl text-center border-b border-gray-300 pb-4">...</p>
+
+                    <input type="hidden" name="UniqueCode" id="field-code">
+                    <input type="hidden" name="GroupName" id="field-group">
+
+                    <div class="flex flex-col gap-2">
+                        <label for="guestCount" class="font-bold text-xs md:text-sm uppercase tracking-widest">Total
+                            guests attending</label>
+                        <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent">
+                    </div>
+
+                    <fieldset id="ceremony-fieldset" class="border border-gray-200 p-4 rounded-sm">
+                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Will you attend the
+                            ceremony?</legend>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendCeremonyYes" name="AttendCeremony" value="Yes" checked
+                                    class="accent-text"> Yes</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendCeremonyNo" name="AttendCeremony" value="No" class="accent-text">
+                                No</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="reception-fieldset" class="border border-gray-200 p-4 rounded-sm">
+                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Will you attend the
+                            reception?</legend>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendReceptionYes" name="AttendReception" value="Yes" checked
+                                    class="accent-text"> Yes</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendReceptionNo" name="AttendReception" value="No" class="accent-text">
+                                No</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="border border-gray-200 p-4 rounded-sm">
+                        <legend class="font-bold text-xs md:text-sm uppercase tracking-widest px-2">Are you vegetarian?
+                        </legend>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
+                                    value="Yes" class="accent-text"> Yes</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
+                                    value="No" checked class="accent-text"> No</label>
+                        </div>
+                    </fieldset>
+
+                    <div class="flex flex-col gap-2">
+                        <label for="notes" class="font-bold text-xs md:text-sm uppercase tracking-widest">Notes
+                            (optional)</label>
+                        <textarea id="notes" name="Notes" rows="3"
+                            placeholder="Song requests, accessibility needs, etc."
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-accent"></textarea>
+                    </div>
+
+                    <p id="form-msg" class="text-center font-bold text-sm"></p>
+
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
+                        <button type="submit"
+                            class="w-full sm:flex-1 bg-text text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-accent transition-colors">Submit
+                            RSVP</button>
+                        <button type="button" id="cancelBtn" onclick="resetLookup()"
+                            class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-8 md:mt-12">If you didn't receive a code,
+                please contact us at <a href="mailto:aldo.y.isabella@gmail.com"
+                    class="underline">aldo.y.isabella@gmail.com</a>.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-text text-white py-8 text-center">
+        <p class="font-serif text-lg">Aldo & Isabella — January 16, 2027</p>
     </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Countdown Logic
+        const targetDate = new Date("January 16, 2027 16:00:00").getTime();
+
+        const countdownTimer = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownTimer);
+                document.getElementById("countdown").innerHTML = "TODAY IS THE DAY!";
+                return;
+            }
+
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("mins").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("secs").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }, 1000);
+
+        // RSVP Logic
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec";
+        let currentGuestMax = 1;
+
+        function show(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+        function resetLookup() {
+            hide('rsvp-form');
+            hide('not-found');
+            hide('loading');
+            show('lookup');
+            document.getElementById('inviteCode').value = '';
+            document.getElementById('form-msg').innerText = '';
+        }
+
+        async function fetchGuestList() {
+            const resp = await fetch('guestlist.json.b64', { cache: "no-store" });
+            if (!resp.ok) throw new Error('Failed to fetch');
+            const b64 = (await resp.text()).trim();
+            try {
+                return JSON.parse(atob(b64));
+            } catch (err) {
+                const bin = atob(b64);
+                const bytes = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+                return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+            }
+        }
+
+        async function handleLookup() {
+            const code = document.getElementById('inviteCode').value.trim();
+            if (!code) return;
+
+            hide('lookup');
+            show('loading');
+
+            try {
+                const guestList = await fetchGuestList();
+                const entry = guestList.find(g => String(g.UniqueCode).toLowerCase() === code.toLowerCase());
+
+                hide('loading');
+
+                if (!entry) {
+                    show('not-found');
+                    return;
+                }
+
+                show('rsvp-form');
+                document.getElementById('field-code').value = entry.UniqueCode;
+                document.getElementById('field-group').value = entry.GroupName;
+                document.getElementById('welcome').innerText = `Welcome ${entry.GroupName}!`;
+
+                const ceremonyFieldset = document.getElementById('ceremony-fieldset');
+                const ceremonyYes = document.getElementById('attendCeremonyYes');
+                const ceremonyNo = document.getElementById('attendCeremonyNo');
+
+                if (entry.InvitedToCeremony !== true) {
+                    hide('ceremony-fieldset');
+                    ceremonyYes.disabled = true;
+                    ceremonyNo.checked = true;
+                    ceremonyNo.disabled = true;
+                } else {
+                    show('ceremony-fieldset');
+                    ceremonyYes.disabled = false;
+                    ceremonyNo.disabled = false;
+                }
+
+                currentGuestMax = parseInt(entry.MaxAllowedGuests || 1, 10);
+                const guestInput = document.getElementById('guestCount');
+                guestInput.max = currentGuestMax;
+                guestInput.value = Math.min(currentGuestMax, 1);
+
+                window.location.hash = "rsvp";
+            } catch (err) {
+                hide('loading');
+                show('not-found');
+                console.error(err);
+            }
+        }
+
+        document.getElementById('guestCount').addEventListener('input', (e) => {
+            const val = parseInt(e.target.value || 0, 10);
+            const msg = document.getElementById('form-msg');
+            if (val > currentGuestMax) msg.innerText = `Maximum allowed is ${currentGuestMax} guests.`;
+            else msg.innerText = '';
+        });
+
+        document.getElementById('rsvp-form').addEventListener('submit', async (ev) => {
+            ev.preventDefault();
+            const msg = document.getElementById('form-msg');
+            const guestCount = parseInt(document.getElementById('guestCount').value || 0, 10);
+            const attendCeremony = document.querySelector('input[name="AttendCeremony"]:checked')?.value === "Yes";
+            const attendReception = document.querySelector('input[name="AttendReception"]:checked')?.value === "Yes";
+
+            if (guestCount < 0 || guestCount > currentGuestMax) {
+                msg.innerText = `Guest count must be between 0 and ${currentGuestMax}.`;
+                return;
+            }
+            if (guestCount > 0 && !(attendCeremony || attendReception)) {
+                msg.innerText = 'Please select at least one event.';
+                return;
+            }
+
+            msg.innerText = "Submitting...";
+            msg.className = "text-center font-bold text-sm text-gray-600 mt-2";
+
+            const payload = {
+                UniqueCode: document.getElementById('field-code').value,
+                GroupName: document.getElementById('field-group').value,
+                AttendCeremony: attendCeremony ? "Yes" : "No",
+                AttendReception: attendReception ? "Yes" : "No",
+                GuestCount: guestCount,
+                Vegetarian: document.querySelector('input[name="Vegetarian"]:checked')?.value || "No",
+                Notes: document.getElementById('notes').value
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" }
+                });
+
+                if (res.ok) {
+                    msg.innerText = "✅ Thank you! Your RSVP has been recorded.";
+                    msg.className = "text-center font-bold text-sm text-green-600 mt-2";
+                    document.getElementById('rsvp-form').reset();
+                } else {
+                    msg.innerText = "❌ Submission failed. Try again.";
+                    msg.className = "text-center font-bold text-sm text-red-600 mt-2";
+                }
+            } catch (err) {
+                msg.innerText = "❌ Network error. Try again later.";
+                msg.className = "text-center font-bold text-sm text-red-600 mt-2";
+            }
+        });
+
+        // Automatically load RSVP form if "code" is in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                document.getElementById('inviteCode').value = code;
+                handleLookup();
+                setTimeout(() => window.location.hash = "rsvp", 500);
+            }
+        });
+    </script>
 </body>
 
 </html>
