@@ -286,6 +286,22 @@
             pointer-events: all;
         }
         #intro-skip:hover { color: rgba(255,255,255,0.55); }
+        /* Photo background slides */
+        .intro-slide-bg {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .intro-slide-scrim {
+            position: absolute;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.52);
+            z-index: 1;
+        }
+        .intro-slide-bg .intro-eyebrow,
+        .intro-slide-bg .intro-divider,
+        .intro-slide-bg .intro-headline,
+        .intro-slide-bg .intro-subheadline { position: relative; z-index: 2; }
         /* Overlay fade out */
         @keyframes overlayOut {
             0%   { opacity: 1; }
@@ -303,7 +319,8 @@
     <!-- INTRO OVERLAY -->
     <div id="intro-overlay">
         <!-- Slide 1: Names -->
-        <div class="intro-slide" id="intro-slide-0">
+        <div class="intro-slide intro-slide-bg" id="intro-slide-0" style="background-image:url('gallery/intro1.jpg')">
+            <div class="intro-slide-scrim"></div>
             <div class="intro-eyebrow">a wedding celebration</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">Aldo &amp; Isabella</div>
@@ -311,7 +328,8 @@
         </div>
 
         <!-- Slide 2: Date -->
-        <div class="intro-slide" id="intro-slide-1">
+        <div class="intro-slide intro-slide-bg" id="intro-slide-1" style="background-image:url('gallery/intro2.jpg')">
+            <div class="intro-slide-scrim"></div>
             <div class="intro-eyebrow">save the date</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">January 16</div>
@@ -319,7 +337,8 @@
         </div>
 
         <!-- Slide 3: Venue -->
-        <div class="intro-slide" id="intro-slide-2">
+        <div class="intro-slide intro-slide-bg" id="intro-slide-2" style="background-image:url('gallery/intro3.jpg')">
+            <div class="intro-slide-scrim"></div>
             <div class="intro-eyebrow">join us at</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">The Plaza Hotel</div>
@@ -327,7 +346,8 @@
         </div>
 
         <!-- Slide 4: Invitation -->
-        <div class="intro-slide" id="intro-slide-3">
+        <div class="intro-slide intro-slide-bg" id="intro-slide-3" style="background-image:url('gallery/intro4.jpg')">
+            <div class="intro-slide-scrim"></div>
             <div class="intro-eyebrow">you are</div>
             <div class="intro-divider"></div>
             <div class="intro-headline italic-style">cordially invited</div>
@@ -880,7 +900,7 @@
             if (urlParams.get('code')) { overlay.remove(); return; }
 
             const SLIDE_IDS = ['intro-slide-0', 'intro-slide-1', 'intro-slide-2', 'intro-slide-3'];
-            const SLIDE_DURATION = 8000;
+            const SLIDE_DURATION = 4000;
 
             let currentIdx    = -1;
             let slideStart    = null;
