@@ -868,6 +868,19 @@
                     individual, 2 for a couple). Editable per row below.</p>
                 <p id="adminActionMsg" class="text-sm mb-3"></p>
 
+                <!-- In-page delete confirmation. Native confirm() is unreliable —
+                     it returns false with no prompt in a sandboxed iframe or when
+                     the browser is set to block dialogs, which made the remove
+                     button look broken. This always renders. -->
+                <div id="adminConfirmBar"
+                    class="hidden flex-wrap items-center gap-2 mb-3 p-3 bg-red-50 border border-red-200 rounded-sm">
+                    <span id="adminConfirmText" class="text-sm text-red-800 flex-1 min-w-[12rem]"></span>
+                    <button id="adminConfirmYes" type="button"
+                        class="bg-red-600 text-white px-3 py-2 rounded-sm uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">Remove</button>
+                    <button id="adminConfirmNo" type="button"
+                        class="bg-gray-200 text-text px-3 py-2 rounded-sm uppercase text-xs tracking-widest hover:bg-gray-300 transition-colors">Cancel</button>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
@@ -878,7 +891,9 @@
                                 <th class="py-2 pr-3">Coming</th>
                                 <th class="py-2 pr-3">Vegetarian</th>
                                 <th class="py-2 pr-3">Notes</th>
-                                <th class="py-2 w-8"></th>
+                                <!-- Pinned right: the table scrolls sideways on a
+                                     phone and this column was landing off-screen. -->
+                                <th class="py-2 w-12 sticky right-0 bg-white"></th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
@@ -1406,12 +1421,16 @@
             const addBtn = document.getElementById('adminAddBtn');
             const exportBtn = document.getElementById('adminExportBtn');
             const actionMsg = document.getElementById('adminActionMsg');
+            const confirmBar = document.getElementById('adminConfirmBar');
+            const confirmText = document.getElementById('adminConfirmText');
+            const confirmYesBtn = document.getElementById('adminConfirmYes');
+            const confirmNoBtn = document.getElementById('adminConfirmNo');
 
             function openModal() {
                 modal.classList.remove('hidden');
                 if (sessionStorage.getItem('adminUnlocked') === '1') unlock();
             }
-            function closeModal() { modal.classList.add('hidden'); }
+            function closeModal() { cancelRemove(); modal.classList.add('hidden'); }
 
             // The shared list, not a copy — so adding or removing here is
             // immediately visible to the RSVP picker. Mutate it in place; never
@@ -1478,13 +1497,16 @@
                     Array.from(rest.content.children).forEach((td) => tr.appendChild(td));
 
                     const tdDel = document.createElement('td');
-                    tdDel.className = 'py-2 text-right';
+                    tdDel.className = 'py-2 text-right sticky right-0 bg-white';
                     const delBtn = document.createElement('button');
                     delBtn.type = 'button';
                     delBtn.textContent = '×';
                     delBtn.title = `Remove ${r.name}`;
-                    delBtn.className = 'text-gray-300 hover:text-red-600 transition-colors text-lg leading-none px-2';
-                    delBtn.addEventListener('click', () => removeGuest(r));
+                    delBtn.setAttribute('aria-label', `Remove ${r.name}`);
+                    delBtn.className =
+                        'text-gray-400 hover:text-red-600 active:text-red-700 transition-colors ' +
+                        'text-xl leading-none w-11 h-11 align-middle';
+                    delBtn.addEventListener('click', () => askRemove(r));
                     tdDel.appendChild(delBtn);
                     tr.appendChild(tdDel);
 
@@ -1564,11 +1586,33 @@
                 }
             }
 
-            async function removeGuest(row) {
+            // Two steps so a stray tap can't delete a guest, but without native
+            // confirm() — that silently returns false where dialogs are blocked,
+            // which made this button look dead.
+            let pendingDelete = null;
+
+            function askRemove(row) {
+                pendingDelete = row;
                 const warn = row.status === 'yes' || row.status === 'no'
-                    ? `\n\n${row.name} has already RSVP'd (${row.status === 'yes' ? 'attending' : 'declined'}). This deletes that response too.`
+                    ? ` They already RSVP'd (${row.status === 'yes' ? 'attending' : 'declined'}) — that response is deleted too.`
                     : '';
-                if (!confirm(`Remove ${row.name} from the guest list?${warn}`)) return;
+                confirmText.textContent = `Remove ${row.name} from the guest list?${warn}`;
+                confirmBar.classList.remove('hidden');
+                confirmBar.classList.add('flex');
+                setActionMsg('');
+                confirmBar.scrollIntoView({ block: 'nearest' });
+            }
+
+            function cancelRemove() {
+                pendingDelete = null;
+                confirmBar.classList.add('hidden');
+                confirmBar.classList.remove('flex');
+            }
+
+            async function confirmRemove() {
+                const row = pendingDelete;
+                if (!row) return;
+                cancelRemove();
                 setActionMsg('Removing...');
                 try {
                     await deleteDoc(doc(db, 'guests', row.id));
@@ -1606,10 +1650,13 @@
             async function unlock() {
                 gate.classList.add('hidden');
                 panel.classList.remove('hidden');
+                cancelRemove();
                 setActionMsg('');
                 await loadRows();
             }
 
+            confirmYesBtn.addEventListener('click', confirmRemove);
+            confirmNoBtn.addEventListener('click', cancelRemove);
             addBtn.addEventListener('click', addGuest);
             newNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addGuest(); });
             exportBtn.addEventListener('click', exportCsv);
