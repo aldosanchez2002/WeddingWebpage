@@ -64,6 +64,9 @@
             z-index: 9999;
             -webkit-font-smoothing: auto;
             -moz-osx-font-smoothing: auto;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
             background: #060606;
             display: flex;
             align-items: center;
@@ -189,7 +192,7 @@
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 9px;
+            gap: 16px;
             align-items: center;
             z-index: 10;
         }
@@ -203,11 +206,12 @@
             cursor: pointer;
             pointer-events: all;
         }
-        /* Invisible 44px hit area around each dot for thumbs. */
+        /* Invisible hit area around each dot for thumbs: full 44px tall, and half the
+           16px gap to either side so neighbouring targets never overlap. */
         .intro-dot::after {
             content: '';
             position: absolute;
-            inset: -19px;
+            inset: -19px -8px;
         }
         .intro-dot.active {
             background: rgb(208, 217, 193);
@@ -1025,21 +1029,51 @@
                 overlay.appendChild(s);
             }
 
-            // Swipe left/right on touch devices (the arrows are hidden on phones).
-            let touchX = null, touchY = null;
+            // Instagram-stories navigation: tap the right side to go forward, the
+            // left side to go back. Dragging still swipes; the dots, skip button and
+            // desktop arrows keep their own handlers and are excluded from the zones.
+            const BACK_ZONE  = 0.33;   // left third of the viewport goes backwards
+            const SWIPE_MIN  = 45;     // px of horizontal travel that counts as a swipe
+            const TAP_SLOP   = 12;     // px of travel still forgiven as a tap
+            const CONTROLS   = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn';
+
+            function navFromX(clientX) {
+                if (clientX < window.innerWidth * BACK_ZONE) {
+                    if (currentIdx > 0) showSlide(currentIdx - 1);
+                } else {
+                    showSlide(currentIdx + 1);   // past the last slide this ends the intro
+                }
+            }
+
+            let touchX = null, touchY = null, lastTouchEnd = 0;
+
             overlay.addEventListener('touchstart', (e) => {
                 touchX = e.changedTouches[0].clientX;
                 touchY = e.changedTouches[0].clientY;
             }, { passive: true });
+
             overlay.addEventListener('touchend', (e) => {
+                lastTouchEnd = Date.now();
                 if (touchX === null) return;
-                const dx = e.changedTouches[0].clientX - touchX;
-                const dy = e.changedTouches[0].clientY - touchY;
+                const t  = e.changedTouches[0];
+                const dx = t.clientX - touchX;
+                const dy = t.clientY - touchY;
                 touchX = touchY = null;
-                if (Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy)) return;
-                if (dx < 0) showSlide(currentIdx + 1);
-                else if (currentIdx > 0) showSlide(currentIdx - 1);
+                if (e.target.closest(CONTROLS)) return;
+                if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
+                    if (dx < 0) showSlide(currentIdx + 1);
+                    else if (currentIdx > 0) showSlide(currentIdx - 1);
+                } else if (Math.abs(dx) < TAP_SLOP && Math.abs(dy) < TAP_SLOP) {
+                    navFromX(t.clientX);
+                }
             }, { passive: true });
+
+            // Same zones for a mouse. Ignore the synthetic click a tap emits.
+            overlay.addEventListener('click', (e) => {
+                if (Date.now() - lastTouchEnd < 600) return;
+                if (e.target.closest(CONTROLS)) return;
+                navFromX(e.clientX);
+            });
 
             skipBtn.addEventListener('click', endIntro);
             prevBtn.addEventListener('click', () => { if (currentIdx > 0) showSlide(currentIdx - 1); });
