@@ -41,6 +41,53 @@
         }
 
         /* Timeline styling */
+
+        /* Warm-to-dusk wash behind the schedule, tracking the day's actual arc
+           from a 4pm ceremony to an 11pm send-off. Static gradient, no JS. */
+        .schedule-timeline {
+            position: relative;
+        }
+        .schedule-timeline::before {
+            content: '';
+            position: absolute;
+            inset: -1.5rem -1rem;
+            z-index: -1;
+            border-radius: 1.5rem;
+            background: linear-gradient(
+                to bottom,
+                rgba(230, 190, 120, 0.10) 0%,
+                rgba(196, 150, 130, 0.08) 40%,
+                rgba(150, 120, 140, 0.07) 70%,
+                rgba(60, 55, 90, 0.09) 100%
+            );
+        }
+
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(22px);
+            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .timeline-item.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Stagger the reveal down the list. */
+        .timeline-item:nth-child(1) { transition-delay: 0ms; }
+        .timeline-item:nth-child(2) { transition-delay: 70ms; }
+        .timeline-item:nth-child(3) { transition-delay: 140ms; }
+        .timeline-item:nth-child(4) { transition-delay: 210ms; }
+        .timeline-item:nth-child(5) { transition-delay: 280ms; }
+        .timeline-item:nth-child(6) { transition-delay: 350ms; }
+        /* Tactile feedback on tap, since nothing here is a link. */
+        .timeline-item:active {
+            transform: scale(0.98);
+        }
+        .timeline-item.in-view:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Connecting line: drawn (not just faded) once its item is in view —
+           a one-shot CSS transition per item, not a continuous scroll effect. */
         .timeline-item::after {
             content: '';
             position: absolute;
@@ -48,12 +95,44 @@
             top: 36px;
             bottom: -8px;
             width: 2px;
-            background-color: #E5E0D8;
+            background-color: rgba(170, 180, 156, 0.4);
             z-index: 0;
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
         }
-
+        .timeline-item.in-view::after {
+            transform: scaleY(1);
+        }
         .timeline-item:last-child::after {
             display: none;
+        }
+
+        /* Marker circle: a ring and soft shadow instead of a flat icon-in-a-circle,
+           with a small pop when it enters view. */
+        .schedule-marker {
+            border-radius: 50%;
+            border: 1.5px solid rgba(170, 180, 156, 0.5);
+            box-shadow: 0 2px 10px rgba(58, 56, 54, 0.09);
+            transform: scale(0.55);
+            opacity: 0;
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s, opacity 0.4s ease 0.1s, box-shadow 0.25s ease;
+        }
+        .timeline-item.in-view .schedule-marker {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .timeline-item:hover .schedule-marker,
+        .timeline-item:active .schedule-marker {
+            box-shadow: 0 2px 14px rgba(170, 180, 156, 0.45);
+            border-color: rgba(170, 180, 156, 0.9);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .timeline-item, .timeline-item::after, .schedule-marker {
+                transition: none !important;
+                transform: none !important;
+                opacity: 1 !important;
+            }
         }
     </style>
     <style>
@@ -509,44 +588,44 @@
             <div class="text-center mb-12 md:mb-16">
                 <h2 class="font-serif text-4xl md:text-5xl">Schedule</h2>
             </div>
-            <div class="relative pl-2 sm:pl-6 md:pl-0">
+            <div class="relative pl-2 sm:pl-6 md:pl-0 schedule-timeline">
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon1.png" alt="Ceremony" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">04:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon2.png" alt="Cocktail" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cocktail</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">05:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon3.png" alt="Dinner" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Dinner</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">06:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon4.png" alt="Party" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Party</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">08:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon5.png" alt="Cake Cutting" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">09:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10">
+                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon6.png" alt="Homeline" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Homeline</h3>
@@ -940,6 +1019,30 @@
                 setTimeout(() => window.location.hash = "rsvp", 500);
             }
         });
+
+        // ===== SCHEDULE REVEAL =====
+        // Fires each item's CSS transition once as it enters the viewport, then
+        // stops watching it. IntersectionObserver only re-runs on real visibility
+        // changes, not on every scroll tick, so this stays cheap on mobile.
+        (function () {
+            const items = document.querySelectorAll('#schedule .timeline-item');
+            if (!items.length) return;
+
+            if (!('IntersectionObserver' in window)) {
+                items.forEach((el) => el.classList.add('in-view'));
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add('in-view');
+                    observer.unobserve(entry.target);
+                });
+            }, { threshold: 0.25, rootMargin: '0px 0px -10% 0px' });
+
+            items.forEach((el) => observer.observe(el));
+        })();
 
         // ===== INTRO SEQUENCE =====
         (function () {
