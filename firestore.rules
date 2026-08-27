@@ -22,8 +22,9 @@ rules_version = '2';
 // that are actually possible without real auth:
 //   - writes must be well-formed guest records (see the validators), so
 //     the collection can't be filled with arbitrary junk or huge payloads
-//   - an update may only touch status/vegetarian/notes/respondedAt, so a
-//     guest RSVPing can't rewrite someone's name
+//   - an update may only touch the response fields (status, vegetarian,
+//     notes, respondedAt, maxGuests, attendingCount), so a guest RSVPing
+//     can't rewrite someone's name
 //   - the admin page has an "Export CSV" button; taking a backup now and
 //     then is the recovery path if the list is ever destroyed
 //
