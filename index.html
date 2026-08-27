@@ -764,6 +764,15 @@
                         </div>
                     </fieldset>
 
+                    <!-- Only rendered for invitations covering more than one person. -->
+                    <div id="party-size-wrap" class="hidden flex-col gap-2">
+                        <label for="partySize" class="font-bold text-xs md:text-sm uppercase tracking-widest">How
+                            many of you are coming?</label>
+                        <select id="partySize"
+                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page"></select>
+                        <p id="party-size-hint" class="text-xs text-gray-500"></p>
+                    </div>
+
                     <fieldset id="veg-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
                         <legend
                             class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
@@ -845,13 +854,18 @@
                         CSV</button>
                 </div>
 
-                <!-- Add a guest -->
-                <div class="flex gap-2 mb-4">
+                <!-- Add a guest. "Seats" is how many people this one invitation
+                     covers — 1 for an individual, 2 for a couple, etc. -->
+                <div class="flex gap-2 mb-1">
                     <input id="adminNewName" type="text" placeholder="Add a guest by name"
                         class="flex-1 p-2 text-sm border border-gray-300 rounded-sm focus:outline-none focus:border-wedding">
+                    <input id="adminNewSeats" type="number" min="1" max="20" value="1" title="Seats on this invitation"
+                        class="w-16 p-2 text-sm text-center border border-gray-300 rounded-sm focus:outline-none focus:border-wedding">
                     <button id="adminAddBtn" type="button"
                         class="bg-wedding text-white px-4 rounded-sm uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">Add</button>
                 </div>
+                <p class="text-xs text-gray-400 mb-3">Seats = how many people this invitation covers (1 for an
+                    individual, 2 for a couple). Editable per row below.</p>
                 <p id="adminActionMsg" class="text-sm mb-3"></p>
 
                 <div class="overflow-x-auto">
@@ -859,7 +873,9 @@
                         <thead>
                             <tr class="border-b border-gray-300 uppercase text-xs tracking-widest text-gray-500">
                                 <th class="py-2 pr-3">Name</th>
+                                <th class="py-2 pr-3">Seats</th>
                                 <th class="py-2 pr-3">Status</th>
+                                <th class="py-2 pr-3">Coming</th>
                                 <th class="py-2 pr-3">Vegetarian</th>
                                 <th class="py-2 pr-3">Notes</th>
                                 <th class="py-2 w-8"></th>
@@ -1156,6 +1172,10 @@
             const formMsg = document.getElementById('rsvp-form-msg');
             const confirmStep = document.getElementById('rsvp-confirm');
             const confirmMsg = document.getElementById('rsvp-confirm-msg');
+            const partyWrap = document.getElementById('party-size-wrap');
+            const partySelect = document.getElementById('partySize');
+            const partyHint = document.getElementById('party-size-hint');
+            const vegFieldset = document.getElementById('veg-fieldset');
 
             let guests = [];   // [{id, name, status, vegetarian, notes}]
             let currentId = null;
@@ -1193,6 +1213,42 @@
                 });
             }
 
+            // Show the headcount picker only when the invitation covers more than
+            // one person; a party of 1 doesn't need to be asked.
+            function setupPartySize(g) {
+                const seats = Math.max(1, Number(g.maxGuests) || 1);
+                if (seats <= 1) {
+                    partyWrap.classList.add('hidden');
+                    partyWrap.classList.remove('flex');
+                    partySelect.innerHTML = '';
+                    return;
+                }
+                partySelect.innerHTML = '';
+                for (let i = 1; i <= seats; i++) {
+                    const opt = document.createElement('option');
+                    opt.value = String(i);
+                    opt.textContent = i === 1 ? 'Just me (1)' : `${i} of us`;
+                    partySelect.appendChild(opt);
+                }
+                // Reuse their previous answer when they come back to edit.
+                const prev = Number(g.attendingCount);
+                partySelect.value = String(prev >= 1 && prev <= seats ? prev : seats);
+                partyHint.textContent = `Your invitation includes up to ${seats} people.`;
+                partyWrap.classList.remove('hidden');
+                partyWrap.classList.add('flex');
+            }
+
+            // The headcount question only makes sense for someone attending.
+            function syncPartyVisibility() {
+                const g = guests.find((x) => x.id === currentId);
+                const seats = Math.max(1, Number(g && g.maxGuests) || 1);
+                const declining = document.getElementById('attendingNo').checked;
+                const show = seats > 1 && !declining;
+                partyWrap.classList.toggle('hidden', !show);
+                partyWrap.classList.toggle('flex', show);
+                vegFieldset.classList.toggle('hidden', declining);
+            }
+
             function selectGuest(id) {
                 const g = guests.find((x) => x.id === id);
                 if (!g) return;
@@ -1209,10 +1265,17 @@
                 document.getElementById('rsvpNotes').value = g.notes || '';
                 formMsg.textContent = '';
 
+                setupPartySize(g);
+                syncPartyVisibility();
+
                 searchStep.classList.add('hidden');
                 form.classList.remove('hidden');
                 confirmStep.classList.add('hidden');
             }
+
+            document.querySelectorAll('input[name="Attending"]').forEach((r) => {
+                r.addEventListener('change', syncPartyVisibility);
+            });
 
             searchInput.addEventListener('input', (e) => renderSuggestions(e.target.value));
             searchInput.addEventListener('keydown', (e) => {
@@ -1243,26 +1306,41 @@
                     return;
                 }
                 const status = attending.value; // 'yes' | 'no'
+                const g = guests.find((x) => x.id === currentId);
+                const seats = Math.max(1, Number(g && g.maxGuests) || 1);
                 const vegetarian = status === 'yes'
                     ? (document.querySelector('input[name="Vegetarian"]:checked')?.value || 'no')
                     : null;
                 const notes = document.getElementById('rsvpNotes').value.trim();
+
+                // Declining is always 0. A single-seat invitation is implicitly 1,
+                // since it never shows the picker. Clamp so a tampered <select>
+                // can't claim more seats than the invitation allows.
+                let attendingCount;
+                if (status === 'no') {
+                    attendingCount = 0;
+                } else if (seats <= 1) {
+                    attendingCount = 1;
+                } else {
+                    attendingCount = Math.min(seats, Math.max(1, Number(partySelect.value) || 1));
+                }
 
                 formMsg.textContent = 'Submitting...';
                 formMsg.className = 'text-center font-bold text-sm text-gray-600';
 
                 try {
                     await updateDoc(doc(db, 'guests', currentId), {
-                        status, vegetarian, notes, respondedAt: serverTimestamp()
+                        status, vegetarian, notes, attendingCount, respondedAt: serverTimestamp()
                     });
-                    const g = guests.find((x) => x.id === currentId);
-                    if (g) Object.assign(g, { status, vegetarian, notes });
+                    if (g) Object.assign(g, { status, vegetarian, notes, attendingCount });
 
                     form.classList.add('hidden');
                     confirmStep.classList.remove('hidden');
-                    confirmMsg.textContent = status === 'yes'
-                        ? "We can't wait to celebrate with you!"
-                        : "We'll miss you, but thank you for letting us know.";
+                    confirmMsg.textContent = status === 'no'
+                        ? "We'll miss you, but thank you for letting us know."
+                        : attendingCount > 1
+                            ? `We can't wait to celebrate with all ${attendingCount} of you!`
+                            : "We can't wait to celebrate with you!";
                 } catch (err) {
                     console.error(err);
                     formMsg.textContent = 'Something went wrong. Please try again.';
@@ -1292,6 +1370,7 @@
             const summary = document.getElementById('adminSummary');
             const tbody = document.getElementById('adminTableBody');
             const newNameInput = document.getElementById('adminNewName');
+            const newSeatsInput = document.getElementById('adminNewSeats');
             const addBtn = document.getElementById('adminAddBtn');
             const exportBtn = document.getElementById('adminExportBtn');
             const actionMsg = document.getElementById('adminActionMsg');
@@ -1311,23 +1390,57 @@
                 );
             }
 
+            const seatsOf = (r) => Math.max(1, Number(r.maxGuests) || 1);
+
             function renderRows() {
                 tbody.innerHTML = '';
-                const yes = adminRows.filter((r) => r.status === 'yes').length;
+                const yes = adminRows.filter((r) => r.status === 'yes');
                 const no = adminRows.filter((r) => r.status === 'no').length;
-                const pending = adminRows.length - yes - no;
-                summary.textContent = `${adminRows.length} invited — ${yes} attending, ${no} declined, ${pending} pending`;
+                const pending = adminRows.length - yes.length - no;
+                // Headcount, not invitation count — this is the number catering needs.
+                const heads = yes.reduce((sum, r) => sum + Math.max(1, Number(r.attendingCount) || 1), 0);
+                const seatsTotal = adminRows.reduce((sum, r) => sum + seatsOf(r), 0);
+                summary.textContent =
+                    `${adminRows.length} invitations (${seatsTotal} seats) — ` +
+                    `${yes.length} accepted = ${heads} guests, ${no} declined, ${pending} pending`;
 
                 adminRows.forEach((r) => {
+                    const seats = seatsOf(r);
                     const tr = document.createElement('tr');
                     tr.className = 'border-b border-gray-100';
                     const statusLabel = r.status === 'yes' ? 'Attending' : r.status === 'no' ? 'Declined' : 'Pending';
                     const statusColor = r.status === 'yes' ? 'text-green-600' : r.status === 'no' ? 'text-red-600' : 'text-gray-400';
-                    tr.innerHTML = `
-                        <td class="py-2 pr-3">${escapeHtml(r.name)}</td>
+                    const coming = r.status === 'yes'
+                        ? `${Math.max(1, Number(r.attendingCount) || 1)} of ${seats}`
+                        : r.status === 'no' ? '0' : '—';
+
+                    const tdName = document.createElement('td');
+                    tdName.className = 'py-2 pr-3';
+                    tdName.textContent = r.name;
+                    tr.appendChild(tdName);
+
+                    // Seats is editable inline — the existing list was all 1-seat, so
+                    // marking couples and families has to be doable after the fact.
+                    const tdSeats = document.createElement('td');
+                    tdSeats.className = 'py-2 pr-3';
+                    const seatsInput = document.createElement('input');
+                    seatsInput.type = 'number';
+                    seatsInput.min = '1';
+                    seatsInput.max = '20';
+                    seatsInput.value = String(seats);
+                    seatsInput.className =
+                        'w-14 p-1 text-sm text-center border border-gray-200 rounded-sm focus:outline-none focus:border-wedding';
+                    seatsInput.addEventListener('change', () => updateSeats(r, seatsInput));
+                    tdSeats.appendChild(seatsInput);
+                    tr.appendChild(tdSeats);
+
+                    const rest = document.createElement('template');
+                    rest.innerHTML = `
                         <td class="py-2 pr-3 font-bold ${statusColor}">${statusLabel}</td>
+                        <td class="py-2 pr-3">${coming}</td>
                         <td class="py-2 pr-3">${r.vegetarian === 'yes' ? 'Yes' : r.vegetarian === 'no' ? 'No' : '—'}</td>
                         <td class="py-2 pr-3">${escapeHtml(r.notes || '')}</td>`;
+                    Array.from(rest.content.children).forEach((td) => tr.appendChild(td));
 
                     const tdDel = document.createElement('td');
                     tdDel.className = 'py-2 text-right';
@@ -1342,6 +1455,35 @@
 
                     tbody.appendChild(tr);
                 });
+            }
+
+            async function updateSeats(row, input) {
+                const seats = Math.min(20, Math.max(1, Math.floor(Number(input.value) || 1)));
+                input.value = String(seats);
+                if (seats === seatsOf(row)) return;
+
+                // Shrinking below what they already confirmed would leave an
+                // impossible count, which the rules reject anyway. Pull it down.
+                const patch = { maxGuests: seats };
+                const confirmed = Number(row.attendingCount) || 0;
+                if (confirmed > seats) patch.attendingCount = seats;
+
+                setActionMsg('Saving...');
+                try {
+                    await updateDoc(doc(db, 'guests', row.id), patch);
+                    Object.assign(row, patch);
+                    renderRows();
+                    setActionMsg(
+                        patch.attendingCount !== undefined
+                            ? `${row.name}: ${seats} seats (their confirmed count was lowered to ${seats}).`
+                            : `${row.name}: ${seats} seat${seats === 1 ? '' : 's'}.`,
+                        'ok'
+                    );
+                } catch (err) {
+                    console.error(err);
+                    input.value = String(seatsOf(row));
+                    setActionMsg("Couldn't save that. Check the Firestore rules are published.", 'error');
+                }
             }
 
             async function loadRows() {
@@ -1370,16 +1512,20 @@
                     setActionMsg(`"${name}" is already on the list.`, 'error');
                     return;
                 }
+                const seats = Math.min(20, Math.max(1, Math.floor(Number(newSeatsInput.value) || 1)));
                 setActionMsg('Adding...');
                 try {
-                    const ref = await addDoc(guestsRef, {
-                        name, status: 'pending', vegetarian: null, notes: '', respondedAt: null
-                    });
-                    adminRows.push({ id: ref.id, name, status: 'pending', vegetarian: null, notes: '' });
+                    const rec = {
+                        name, status: 'pending', vegetarian: null, notes: '',
+                        maxGuests: seats, attendingCount: null, respondedAt: null
+                    };
+                    const ref = await addDoc(guestsRef, rec);
+                    adminRows.push({ id: ref.id, ...rec });
                     adminRows.sort((a, b) => a.name.localeCompare(b.name));
                     renderRows();
                     newNameInput.value = '';
-                    setActionMsg(`Added ${name}.`, 'ok');
+                    newSeatsInput.value = '1';
+                    setActionMsg(`Added ${name}${seats > 1 ? ` (${seats} seats)` : ''}.`, 'ok');
                 } catch (err) {
                     console.error(err);
                     setActionMsg("Couldn't add that guest. Check the Firestore rules are published.", 'error');
@@ -1407,9 +1553,13 @@
             // an occasional CSV is the recovery path if the list is ever wiped.
             function exportCsv() {
                 const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-                const lines = [['Name', 'Status', 'Vegetarian', 'Notes'].join(',')];
+                const lines = [['Name', 'Seats', 'Status', 'Coming', 'Vegetarian', 'Notes'].join(',')];
                 adminRows.forEach((r) => {
-                    lines.push([r.name, r.status || 'pending', r.vegetarian ?? '', r.notes || ''].map(esc).join(','));
+                    const coming = r.status === 'yes' ? Math.max(1, Number(r.attendingCount) || 1)
+                        : r.status === 'no' ? 0 : '';
+                    lines.push([
+                        r.name, seatsOf(r), r.status || 'pending', coming, r.vegetarian ?? '', r.notes || ''
+                    ].map(esc).join(','));
                 });
                 const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
                 const url = URL.createObjectURL(blob);

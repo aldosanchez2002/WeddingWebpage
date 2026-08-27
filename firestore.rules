@@ -41,6 +41,11 @@ service cloud.firestore {
       // A well-formed guest record. Applied to creates and to the result of
       // any update, so no write can leave a document in a shape the app
       // doesn't understand.
+      //
+      // maxGuests is how many people one invitation covers (a couple is 2, a
+      // family of four is 4); attendingCount is how many of those actually
+      // confirmed. The last clause is the important one: a guest can never
+      // confirm more people than their invitation was given seats for.
       function validGuest(d) {
         return d.name is string
             && d.name.size() > 0
@@ -48,21 +53,37 @@ service cloud.firestore {
             && d.status in ['yes', 'no', 'pending']
             && (d.vegetarian == null || d.vegetarian in ['yes', 'no'])
             && d.notes is string
-            && d.notes.size() < 1000;
+            && d.notes.size() < 1000
+            && d.maxGuests is int
+            && d.maxGuests >= 1
+            && d.maxGuests <= 20
+            && (d.attendingCount == null
+                || (d.attendingCount is int
+                    && d.attendingCount >= 0
+                    && d.attendingCount <= d.maxGuests));
       }
 
       allow read: if true;
 
       // Adding a guest from the admin page. New guests always start pending
-      // with no response recorded.
+      // with nobody confirmed yet.
       allow create: if validGuest(request.resource.data)
-                    && request.resource.data.status == 'pending';
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.attendingCount == null;
 
       // RSVP submissions and admin edits. The affectedKeys() guard is what
       // stops a guest from overwriting another field (their own name most
       // importantly) while responding.
+      //
+      // maxGuests has to be in this list because the admin page edits seat
+      // counts inline, and — as noted above — the rules can't tell the admin
+      // from a guest. So a determined guest could raise their own seat count
+      // before confirming. The <= 20 cap in validGuest bounds how far that can
+      // go, and it is strictly less damaging than the delete access already
+      // granted below. Firebase Auth is the fix if that ever matters.
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
-                        .hasOnly(['status', 'vegetarian', 'notes', 'respondedAt'])
+                        .hasOnly(['status', 'vegetarian', 'notes', 'respondedAt',
+                                  'maxGuests', 'attendingCount'])
                     && validGuest(request.resource.data);
 
       // Removing a guest from the admin page. Unrestricted — see the note
