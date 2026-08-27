@@ -233,6 +233,15 @@
             width: 0%;
             background: rgba(170,180,156,0.5);
         }
+        /* Press-and-hold feedback: the fill brightens and the bar itself grows a
+           little taller, so a held slide reads as paused rather than stalled. */
+        #intro-overlay.is-holding #intro-progress {
+            height: 2px;
+            transition: height 0.2s ease;
+        }
+        #intro-overlay.is-holding #intro-progress-fill {
+            background: rgba(208,217,193,0.85);
+        }
         /* Arrow nav buttons */
         .intro-nav-btn {
             position: absolute;
@@ -954,6 +963,7 @@
             let slideStart    = null;
             let progressRAF   = null;
             let slideTimeout  = null;
+            let pausedElapsed = 0;    // ms already elapsed on the current slide when held
 
             document.documentElement.style.overflow = 'hidden';
 
@@ -975,6 +985,23 @@
                 if (pct < 99.5) progressRAF = requestAnimationFrame(tickProgress);
             }
 
+            // Press-and-hold pauses the current slide (like Instagram stories):
+            // the countdown and progress bar freeze until release.
+            function pauseForHold() {
+                pausedElapsed = Date.now() - slideStart;
+                clearTimeout(slideTimeout);
+                cancelAnimationFrame(progressRAF);
+                overlay.classList.add('is-holding');
+            }
+
+            function resumeFromHold() {
+                overlay.classList.remove('is-holding');
+                slideStart = Date.now() - pausedElapsed;
+                progressRAF = requestAnimationFrame(tickProgress);
+                const remaining = Math.max(400, SLIDE_DURATION - pausedElapsed);
+                slideTimeout = setTimeout(() => showSlide(currentIdx + 1), remaining);
+            }
+
             function updateControls() {
                 prevBtn.disabled = currentIdx <= 0;
                 dots.forEach((d, i) => d.classList.toggle('active', i === currentIdx));
@@ -983,6 +1010,7 @@
             function showSlide(idx) {
                 clearTimeout(slideTimeout);
                 cancelAnimationFrame(progressRAF);
+                overlay.classList.remove('is-holding');
 
                 // Exit current slide (whole slide fades out via CSS)
                 if (currentIdx >= 0) {
@@ -1030,11 +1058,13 @@
             }
 
             // Instagram-stories navigation: tap the right side to go forward, the
-            // left side to go back. Dragging still swipes; the dots, skip button and
-            // desktop arrows keep their own handlers and are excluded from the zones.
+            // left side to go back. Dragging still swipes, holding still pauses; the
+            // dots, skip button and desktop arrows keep their own handlers and are
+            // excluded from all three gestures.
             const BACK_ZONE  = 0.33;   // left third of the viewport goes backwards
             const SWIPE_MIN  = 45;     // px of horizontal travel that counts as a swipe
-            const TAP_SLOP   = 12;     // px of travel still forgiven as a tap
+            const TAP_SLOP   = 12;     // px of travel still forgiven as a tap/hold
+            const HOLD_DELAY = 180;    // ms of stillness before a press counts as a hold
             const CONTROLS   = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn';
 
             function navFromX(clientX) {
@@ -1046,20 +1076,48 @@
             }
 
             let touchX = null, touchY = null, lastTouchEnd = 0;
+            let holdTimer = null, isHolding = false, suppressNextClick = false;
+
+            function armHold(target) {
+                if (target.closest && target.closest(CONTROLS)) return;
+                clearTimeout(holdTimer);
+                holdTimer = setTimeout(() => { isHolding = true; pauseForHold(); }, HOLD_DELAY);
+            }
+
+            // Returns true if this press was a hold (already resumed), so the caller
+            // skips its normal tap/swipe handling.
+            function disarmHold() {
+                clearTimeout(holdTimer);
+                if (!isHolding) return false;
+                isHolding = false;
+                resumeFromHold();
+                return true;
+            }
 
             overlay.addEventListener('touchstart', (e) => {
                 touchX = e.changedTouches[0].clientX;
                 touchY = e.changedTouches[0].clientY;
+                armHold(e.target);
+            }, { passive: true });
+
+            overlay.addEventListener('touchmove', (e) => {
+                if (touchX === null) return;
+                const t = e.changedTouches[0];
+                if (Math.abs(t.clientX - touchX) > TAP_SLOP || Math.abs(t.clientY - touchY) > TAP_SLOP) {
+                    disarmHold();
+                }
             }, { passive: true });
 
             overlay.addEventListener('touchend', (e) => {
                 lastTouchEnd = Date.now();
+                const wasHolding = disarmHold();
                 if (touchX === null) return;
                 const t  = e.changedTouches[0];
                 const dx = t.clientX - touchX;
                 const dy = t.clientY - touchY;
                 touchX = touchY = null;
                 if (e.target.closest(CONTROLS)) return;
+                if (wasHolding) return;   // release just resumes; it isn't a nav gesture
                 if (Math.abs(dx) >= SWIPE_MIN && Math.abs(dx) > Math.abs(dy)) {
                     if (dx < 0) showSlide(currentIdx + 1);
                     else if (currentIdx > 0) showSlide(currentIdx - 1);
@@ -1068,9 +1126,19 @@
                 }
             }, { passive: true });
 
-            // Same zones for a mouse. Ignore the synthetic click a tap emits.
+            overlay.addEventListener('touchcancel', () => { disarmHold(); touchX = touchY = null; }, { passive: true });
+
+            // Same gestures for a mouse: hold on mousedown, release resumes on mouseup,
+            // click (which fires after mouseup) handles the actual tap navigation.
+            overlay.addEventListener('mousedown', (e) => armHold(e.target));
+            overlay.addEventListener('mouseup', () => { if (disarmHold()) suppressNextClick = true; });
+            overlay.addEventListener('mouseleave', () => disarmHold());
+
+            // Ignore the synthetic click a touch tap emits, and the click that follows
+            // a mouse hold-release.
             overlay.addEventListener('click', (e) => {
                 if (Date.now() - lastTouchEnd < 600) return;
+                if (suppressNextClick) { suppressNextClick = false; return; }
                 if (e.target.closest(CONTROLS)) return;
                 navFromX(e.clientX);
             });
