@@ -838,7 +838,22 @@
             </div>
 
             <div id="adminPanel" class="hidden">
-                <p id="adminSummary" class="text-sm text-gray-600 mb-4"></p>
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <p id="adminSummary" class="text-sm text-gray-600"></p>
+                    <button id="adminExportBtn" type="button"
+                        class="text-xs uppercase tracking-widest underline text-gray-500 hover:text-wedding transition-colors">Export
+                        CSV</button>
+                </div>
+
+                <!-- Add a guest -->
+                <div class="flex gap-2 mb-4">
+                    <input id="adminNewName" type="text" placeholder="Add a guest by name"
+                        class="flex-1 p-2 text-sm border border-gray-300 rounded-sm focus:outline-none focus:border-wedding">
+                    <button id="adminAddBtn" type="button"
+                        class="bg-wedding text-white px-4 rounded-sm uppercase text-xs tracking-widest hover:opacity-90 transition-opacity">Add</button>
+                </div>
+                <p id="adminActionMsg" class="text-sm mb-3"></p>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left border-collapse">
                         <thead>
@@ -846,7 +861,8 @@
                                 <th class="py-2 pr-3">Name</th>
                                 <th class="py-2 pr-3">Status</th>
                                 <th class="py-2 pr-3">Vegetarian</th>
-                                <th class="py-2">Notes</th>
+                                <th class="py-2 pr-3">Notes</th>
+                                <th class="py-2 w-8"></th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody"></tbody>
@@ -1103,7 +1119,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
         import {
-            initializeFirestore, collection, doc, getDocs, updateDoc, serverTimestamp
+            initializeFirestore, collection, doc, getDocs, updateDoc, addDoc, deleteDoc,
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -1274,6 +1291,10 @@
             const panel = document.getElementById('adminPanel');
             const summary = document.getElementById('adminSummary');
             const tbody = document.getElementById('adminTableBody');
+            const newNameInput = document.getElementById('adminNewName');
+            const addBtn = document.getElementById('adminAddBtn');
+            const exportBtn = document.getElementById('adminExportBtn');
+            const actionMsg = document.getElementById('adminActionMsg');
 
             function openModal() {
                 modal.classList.remove('hidden');
@@ -1281,37 +1302,134 @@
             }
             function closeModal() { modal.classList.add('hidden'); }
 
-            async function unlock() {
-                gate.classList.add('hidden');
-                panel.classList.remove('hidden');
+            let adminRows = [];   // last-loaded list, also what Export CSV writes
+
+            function setActionMsg(text, tone) {
+                actionMsg.textContent = text;
+                actionMsg.className = 'text-sm mb-3 ' + (
+                    tone === 'error' ? 'text-red-600' : tone === 'ok' ? 'text-green-600' : 'text-gray-500'
+                );
+            }
+
+            function renderRows() {
+                tbody.innerHTML = '';
+                const yes = adminRows.filter((r) => r.status === 'yes').length;
+                const no = adminRows.filter((r) => r.status === 'no').length;
+                const pending = adminRows.length - yes - no;
+                summary.textContent = `${adminRows.length} invited — ${yes} attending, ${no} declined, ${pending} pending`;
+
+                adminRows.forEach((r) => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-b border-gray-100';
+                    const statusLabel = r.status === 'yes' ? 'Attending' : r.status === 'no' ? 'Declined' : 'Pending';
+                    const statusColor = r.status === 'yes' ? 'text-green-600' : r.status === 'no' ? 'text-red-600' : 'text-gray-400';
+                    tr.innerHTML = `
+                        <td class="py-2 pr-3">${escapeHtml(r.name)}</td>
+                        <td class="py-2 pr-3 font-bold ${statusColor}">${statusLabel}</td>
+                        <td class="py-2 pr-3">${r.vegetarian === 'yes' ? 'Yes' : r.vegetarian === 'no' ? 'No' : '—'}</td>
+                        <td class="py-2 pr-3">${escapeHtml(r.notes || '')}</td>`;
+
+                    const tdDel = document.createElement('td');
+                    tdDel.className = 'py-2 text-right';
+                    const delBtn = document.createElement('button');
+                    delBtn.type = 'button';
+                    delBtn.textContent = '×';
+                    delBtn.title = `Remove ${r.name}`;
+                    delBtn.className = 'text-gray-300 hover:text-red-600 transition-colors text-lg leading-none px-2';
+                    delBtn.addEventListener('click', () => removeGuest(r));
+                    tdDel.appendChild(delBtn);
+                    tr.appendChild(tdDel);
+
+                    tbody.appendChild(tr);
+                });
+            }
+
+            async function loadRows() {
                 summary.textContent = 'Loading...';
                 tbody.innerHTML = '';
                 try {
                     const snap = await getDocs(guestsRef);
-                    const rows = snap.docs
+                    adminRows = snap.docs
                         .map((d) => ({ id: d.id, ...d.data() }))
                         .sort((a, b) => a.name.localeCompare(b.name));
-                    const yes = rows.filter((r) => r.status === 'yes').length;
-                    const no = rows.filter((r) => r.status === 'no').length;
-                    const pending = rows.length - yes - no;
-                    summary.textContent = `${rows.length} invited — ${yes} attending, ${no} declined, ${pending} pending`;
-                    rows.forEach((r) => {
-                        const tr = document.createElement('tr');
-                        tr.className = 'border-b border-gray-100';
-                        const statusLabel = r.status === 'yes' ? 'Attending' : r.status === 'no' ? 'Declined' : 'Pending';
-                        const statusColor = r.status === 'yes' ? 'text-green-600' : r.status === 'no' ? 'text-red-600' : 'text-gray-400';
-                        tr.innerHTML = `
-                            <td class="py-2 pr-3">${escapeHtml(r.name)}</td>
-                            <td class="py-2 pr-3 font-bold ${statusColor}">${statusLabel}</td>
-                            <td class="py-2 pr-3">${r.vegetarian === 'yes' ? 'Yes' : r.vegetarian === 'no' ? 'No' : '—'}</td>
-                            <td class="py-2">${escapeHtml(r.notes || '')}</td>`;
-                        tbody.appendChild(tr);
-                    });
+                    renderRows();
                 } catch (err) {
                     console.error(err);
                     summary.textContent = "Couldn't load the guest list.";
                 }
             }
+
+            async function addGuest() {
+                const name = newNameInput.value.trim();
+                if (!name) return;
+                if (name.length > 120) {
+                    setActionMsg('That name is too long.', 'error');
+                    return;
+                }
+                if (adminRows.some((r) => r.name.toLowerCase() === name.toLowerCase())) {
+                    setActionMsg(`"${name}" is already on the list.`, 'error');
+                    return;
+                }
+                setActionMsg('Adding...');
+                try {
+                    const ref = await addDoc(guestsRef, {
+                        name, status: 'pending', vegetarian: null, notes: '', respondedAt: null
+                    });
+                    adminRows.push({ id: ref.id, name, status: 'pending', vegetarian: null, notes: '' });
+                    adminRows.sort((a, b) => a.name.localeCompare(b.name));
+                    renderRows();
+                    newNameInput.value = '';
+                    setActionMsg(`Added ${name}.`, 'ok');
+                } catch (err) {
+                    console.error(err);
+                    setActionMsg("Couldn't add that guest. Check the Firestore rules are published.", 'error');
+                }
+            }
+
+            async function removeGuest(row) {
+                const warn = row.status === 'yes' || row.status === 'no'
+                    ? `\n\n${row.name} has already RSVP'd (${row.status === 'yes' ? 'attending' : 'declined'}). This deletes that response too.`
+                    : '';
+                if (!confirm(`Remove ${row.name} from the guest list?${warn}`)) return;
+                setActionMsg('Removing...');
+                try {
+                    await deleteDoc(doc(db, 'guests', row.id));
+                    adminRows = adminRows.filter((r) => r.id !== row.id);
+                    renderRows();
+                    setActionMsg(`Removed ${row.name}.`, 'ok');
+                } catch (err) {
+                    console.error(err);
+                    setActionMsg("Couldn't remove that guest. Check the Firestore rules are published.", 'error');
+                }
+            }
+
+            // Local backup. The rules let anyone write to this collection, so keeping
+            // an occasional CSV is the recovery path if the list is ever wiped.
+            function exportCsv() {
+                const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+                const lines = [['Name', 'Status', 'Vegetarian', 'Notes'].join(',')];
+                adminRows.forEach((r) => {
+                    lines.push([r.name, r.status || 'pending', r.vegetarian ?? '', r.notes || ''].map(esc).join(','));
+                });
+                const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `guest-list-${new Date().toISOString().slice(0, 10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            async function unlock() {
+                gate.classList.add('hidden');
+                panel.classList.remove('hidden');
+                setActionMsg('');
+                await loadRows();
+            }
+
+            addBtn.addEventListener('click', addGuest);
+            newNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addGuest(); });
+            exportBtn.addEventListener('click', exportCsv);
 
             openBtn.addEventListener('click', openModal);
             closeBtn.addEventListener('click', closeModal);

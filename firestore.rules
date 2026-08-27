@@ -6,46 +6,68 @@ rules_version = '2';
 // is not applied automatically, it just lives in the repo as the source of
 // truth for what the rules should be.
 //
-// Design:
-// - `guests` is readable by anyone, no auth required. That matches the old
-//   guestlist.json.b64 file this replaced, which was also fully public (base64
-//   is encoding, not encryption — anyone could already decode the whole guest
-//   list from the deployed site). This is not a new exposure.
-// - The admin page's hardcoded password is a client-side convenience for the
-//   couple, NOT real access control — anyone can read it out of the page
-//   source (it's hex, not encryption) and call Firestore directly with the
-//   public apiKey regardless of what the admin UI does. These rules are what
-//   actually protects the data: a public site can't restrict *reads* of a
-//   collection a public admin page needs to list without real user auth, but
-//   it CAN restrict *writes* at the database level, independent of anything
-//   the client claims about who it is. That's what this does:
-//     - no one can create a new guest document or delete one from the client
-//       (only the one-time seed script does that, and it doesn't run through
-//       these rules)
-//     - an update may only touch status/vegetarian/notes/respondedAt — a
-//       guest's `name` and `createdAt` can't be overwritten from the RSVP form
-//     - status/vegetarian are constrained to known values, notes is capped
-//       at 1000 characters, so a malicious client can't stuff garbage or huge
-//       payloads into the collection
+// ============================ READ THIS ============================
+// This collection is fully public: anyone can read it, add to it, and
+// DELETE FROM IT. That is a deliberate, accepted tradeoff, not an
+// oversight — the admin page needs to add and remove guests, its password
+// is checked in the browser, and Firestore never sees that password. All
+// the database sees is an unauthenticated request carrying an apiKey that
+// is public by design (it ships in the page source; Firebase web API keys
+// are identifiers, not secrets). So the rules cannot tell the couple apart
+// from any other visitor, and permissions granted to the admin UI are
+// necessarily granted to everyone.
 //
-// If this list is ever more sensitive than "who's coming to the wedding and
-// what they want to eat," this whole approach (public read, rules-limited
-// write, no real auth) is the wrong model — that would need actual Firebase
-// Authentication and per-user rules instead.
+// Concretely: someone who views source can wipe the entire guest list and
+// every RSVP collected so far. The mitigations below are the guardrails
+// that are actually possible without real auth:
+//   - writes must be well-formed guest records (see the validators), so
+//     the collection can't be filled with arbitrary junk or huge payloads
+//   - an update may only touch status/vegetarian/notes/respondedAt, so a
+//     guest RSVPing can't rewrite someone's name
+//   - the admin page has an "Export CSV" button; taking a backup now and
+//     then is the recovery path if the list is ever destroyed
+//
+// The fix, if this ever matters more: enable Firebase Authentication,
+// create one admin account, and change `allow create, delete` (and
+// ideally the broad update rule) to require `request.auth.uid == '<uid>'`.
+// That is the only way to give the couple write access without giving it
+// to the whole internet.
+// ===================================================================
+
 service cloud.firestore {
   match /databases/{database}/documents {
     match /guests/{guestId} {
+
+      // A well-formed guest record. Applied to creates and to the result of
+      // any update, so no write can leave a document in a shape the app
+      // doesn't understand.
+      function validGuest(d) {
+        return d.name is string
+            && d.name.size() > 0
+            && d.name.size() <= 120
+            && d.status in ['yes', 'no', 'pending']
+            && (d.vegetarian == null || d.vegetarian in ['yes', 'no'])
+            && d.notes is string
+            && d.notes.size() < 1000;
+      }
+
       allow read: if true;
 
+      // Adding a guest from the admin page. New guests always start pending
+      // with no response recorded.
+      allow create: if validGuest(request.resource.data)
+                    && request.resource.data.status == 'pending';
+
+      // RSVP submissions and admin edits. The affectedKeys() guard is what
+      // stops a guest from overwriting another field (their own name most
+      // importantly) while responding.
       allow update: if request.resource.data.diff(resource.data).affectedKeys()
                         .hasOnly(['status', 'vegetarian', 'notes', 'respondedAt'])
-                    && request.resource.data.status in ['yes', 'no', 'pending']
-                    && (request.resource.data.vegetarian == null
-                        || request.resource.data.vegetarian in ['yes', 'no'])
-                    && request.resource.data.notes is string
-                    && request.resource.data.notes.size() < 1000;
+                    && validGuest(request.resource.data);
 
-      allow create, delete: if false;
+      // Removing a guest from the admin page. Unrestricted — see the note
+      // at the top of this file.
+      allow delete: if true;
     }
   }
 }
