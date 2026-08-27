@@ -1161,6 +1161,25 @@
             return div.innerHTML;
         }
 
+        // One guest list shared by the RSVP picker and the admin table. They used
+        // to keep separate copies, so a guest added in the admin panel wasn't
+        // searchable until the page was reloaded. Both now read and mutate this
+        // same array; `list` is never reassigned, only mutated in place, so the
+        // reference the admin table holds stays valid.
+        const guestStore = {
+            list: [],
+            loadedAt: 0,
+            async reload() {
+                const snap = await getDocs(guestsRef);
+                const fresh = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                this.list.length = 0;
+                this.list.push(...fresh);
+                this.list.sort((a, b) => a.name.localeCompare(b.name));
+                this.loadedAt = Date.now();
+                return this.list;
+            }
+        };
+
         // ===== RSVP: find your name, then respond =====
         (function () {
             const searchInput = document.getElementById('guestSearch');
@@ -1177,20 +1196,33 @@
             const partyHint = document.getElementById('party-size-hint');
             const vegFieldset = document.getElementById('veg-fieldset');
 
-            let guests = [];   // [{id, name, status, vegetarian, notes}]
+            const guests = guestStore.list;
             let currentId = null;
 
             async function loadGuests() {
                 searchMsg.textContent = 'Loading guest list...';
                 try {
-                    const snap = await getDocs(guestsRef);
-                    guests = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    await guestStore.reload();
                     searchMsg.textContent = '';
                 } catch (err) {
                     console.error(err);
                     searchMsg.textContent = "Couldn't load the guest list. Please refresh, or email us.";
                 }
             }
+
+            // A page left open goes stale — someone can be added from the admin
+            // panel (or another device) after this one loaded. Re-pull when a
+            // guest actually reaches for the picker, so they don't have to know
+            // to refresh. Cheap: the list is small and this is throttled.
+            searchInput.addEventListener('focus', async () => {
+                if (Date.now() - guestStore.loadedAt < 15000) return;
+                try {
+                    await guestStore.reload();
+                    renderSuggestions(searchInput.value);
+                } catch (err) {
+                    console.error(err);
+                }
+            });
 
             function renderSuggestions(query) {
                 suggestionsEl.innerHTML = '';
@@ -1381,7 +1413,10 @@
             }
             function closeModal() { modal.classList.add('hidden'); }
 
-            let adminRows = [];   // last-loaded list, also what Export CSV writes
+            // The shared list, not a copy — so adding or removing here is
+            // immediately visible to the RSVP picker. Mutate it in place; never
+            // reassign, or the two views drift apart again.
+            const adminRows = guestStore.list;
 
             function setActionMsg(text, tone) {
                 actionMsg.textContent = text;
@@ -1490,10 +1525,7 @@
                 summary.textContent = 'Loading...';
                 tbody.innerHTML = '';
                 try {
-                    const snap = await getDocs(guestsRef);
-                    adminRows = snap.docs
-                        .map((d) => ({ id: d.id, ...d.data() }))
-                        .sort((a, b) => a.name.localeCompare(b.name));
+                    await guestStore.reload();
                     renderRows();
                 } catch (err) {
                     console.error(err);
@@ -1540,7 +1572,8 @@
                 setActionMsg('Removing...');
                 try {
                     await deleteDoc(doc(db, 'guests', row.id));
-                    adminRows = adminRows.filter((r) => r.id !== row.id);
+                    const at = adminRows.findIndex((r) => r.id === row.id);
+                    if (at !== -1) adminRows.splice(at, 1);
                     renderRows();
                     setActionMsg(`Removed ${row.name}.`, 'ok');
                 } catch (err) {
