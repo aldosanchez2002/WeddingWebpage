@@ -735,115 +735,126 @@
             </div>
 
             <div id="rsvp-root">
-                <!-- Lookup Form -->
-                <div id="lookup">
-                    <h3 class="font-serif text-2xl mb-4 text-center">Have an invitation code?</h3>
-                    <form id="lookup-form" class="flex flex-col gap-4">
-                        <label for="inviteCode" class="text-sm font-bold uppercase tracking-widest text-center">Enter
-                            the personalized code from your invitation.</label>
-                        <input id="inviteCode" name="code" type="text" required placeholder="e.g. ABC123"
-                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding text-center bg-page">
-                        <button type="button" onclick="handleLookup()"
-                            class="bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-sm hover:opacity-90 transition-opacity mt-2 shadow-sm">Enter</button>
-                    </form>
+                <!-- Step 1: find your name -->
+                <div id="rsvp-search">
+                    <label for="guestSearch"
+                        class="text-sm font-bold uppercase tracking-widest text-center block mb-3">Find your name on
+                        the guest list</label>
+                    <input id="guestSearch" type="text" autocomplete="off" placeholder="Start typing your name..."
+                        class="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding text-center bg-page">
+                    <div id="guestSuggestions" class="mt-2 flex flex-col gap-1"></div>
+                    <p id="rsvp-search-msg" class="text-center text-sm text-gray-500 mt-4"></p>
                 </div>
 
-                <p id="loading" class="hidden text-center text-gray-600 py-8">Looking up your invitation...</p>
-
-                <div id="not-found" class="hidden text-center py-8">
-                    <h3 class="font-serif text-2xl mb-2 text-red-600">Invitation not found</h3>
-                    <p class="text-sm text-gray-600">Sorry, we could not find your invitation code. Please double-check
-                        or contact us at <a href="mailto:aldo.y.isabella@gmail.com"
-                            class="underline">aldo.y.isabella@gmail.com</a>.</p>
-                    <button type="button" onclick="resetLookup()"
-                        class="mt-6 text-sm underline uppercase tracking-widest text-gray-500 hover:text-wedding transition-colors">Try
-                        Again</button>
-                </div>
-
-                <!-- Main RSVP Form -->
-                <form id="rsvp-form" class="hidden flex flex-col gap-6">
-                    <p id="welcome" class="font-serif text-2xl text-center border-b border-gray-300 pb-4">...</p>
-
-                    <input type="hidden" name="UniqueCode" id="field-code">
-                    <input type="hidden" name="GroupName" id="field-group">
-
-                    <div class="flex flex-col gap-2">
-                        <label for="guestCount" class="font-bold text-xs md:text-sm uppercase tracking-widest">Total
-                            guests attending</label>
-                        <input id="guestCount" name="GuestCount" type="number" min="0" value="1" required
-                            class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page">
-                    </div>
-
-                    <fieldset id="ceremony-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
-                        <legend
-                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
-                            Will you attend the ceremony?</legend>
-                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendCeremonyYes" name="AttendCeremony" value="Yes" checked
-                                    class="accent-wedding"> Yes</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendCeremonyNo" name="AttendCeremony" value="No" class="accent-wedding">
-                                No</label>
-                        </div>
-                    </fieldset>
-
-                    <fieldset id="reception-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
-                        <legend
-                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
-                            Will you attend the reception?</legend>
-                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendReceptionYes" name="AttendReception" value="Yes" checked
-                                    class="accent-wedding"> Yes</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendReceptionNo" name="AttendReception" value="No" class="accent-wedding">
-                                No</label>
-                        </div>
-                    </fieldset>
+                <!-- Step 2: RSVP form -->
+                <form id="rsvp-form" class="hidden flex flex-col gap-6 mt-2">
+                    <p id="rsvp-welcome" class="font-serif text-2xl text-center border-b border-gray-300 pb-4"></p>
 
                     <fieldset class="border border-gray-200 p-4 rounded-sm bg-page">
                         <legend
                             class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
-                            Are you vegetarian?</legend>
+                            Will you be attending?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="Yes" class="accent-wedding"> Yes</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="No" checked class="accent-wedding"> No</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendingYes" name="Attending" value="yes" class="accent-wedding"> Joyfully
+                                Accept</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    id="attendingNo" name="Attending" value="no" class="accent-wedding"> Regretfully
+                                Decline</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="veg-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
+                        <legend
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            Any dietary restriction?</legend>
+                        <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    name="Vegetarian" value="yes" class="accent-wedding"> Vegetarian</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
+                                    name="Vegetarian" value="no" checked class="accent-wedding"> No restriction</label>
                         </div>
                     </fieldset>
 
                     <div class="flex flex-col gap-2">
-                        <label for="notes" class="font-bold text-xs md:text-sm uppercase tracking-widest">Notes
+                        <label for="rsvpNotes" class="font-bold text-xs md:text-sm uppercase tracking-widest">Notes
                             (optional)</label>
-                        <textarea id="notes" name="Notes" rows="3"
-                            placeholder="Song requests, accessibility needs, etc."
+                        <textarea id="rsvpNotes" rows="3" placeholder="Song requests, accessibility needs, etc."
                             class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page"></textarea>
                     </div>
 
-                    <p id="form-msg" class="text-center font-bold text-sm"></p>
+                    <p id="rsvp-form-msg" class="text-center font-bold text-sm"></p>
 
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
                         <button type="submit"
                             class="w-full sm:flex-1 bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity shadow-sm">Submit
                             RSVP</button>
-                        <button type="button" id="cancelBtn" onclick="resetLookup()"
-                            class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors">Cancel</button>
+                        <button type="button" id="rsvpBackBtn"
+                            class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors">Back</button>
                     </div>
                 </form>
+
+                <!-- Step 3: confirmation -->
+                <div id="rsvp-confirm" class="hidden text-center py-8">
+                    <h3 class="font-serif text-2xl mb-2">Thank you!</h3>
+                    <p id="rsvp-confirm-msg" class="text-sm text-gray-600 mb-6"></p>
+                    <button type="button" id="rsvpEditBtn"
+                        class="text-sm underline uppercase tracking-widest text-gray-500 hover:text-wedding transition-colors">Change
+                        my response</button>
+                </div>
             </div>
 
-            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-8 md:mt-12">If you didn't receive a code,
-                please contact us at <a href="mailto:aldo.y.isabella@gmail.com"
-                    class="underline">aldo.y.isabella@gmail.com</a>.</p>
+            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-8 md:mt-12">Can't find your name? Email us
+                at <a href="mailto:aldo.y.isabella@gmail.com" class="underline">aldo.y.isabella@gmail.com</a>.</p>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="bg-text text-white py-8 text-center">
         <p class="font-serif text-lg">Aldo & Isabella — January 16, 2027</p>
+        <button id="adminOpenBtn" type="button"
+            class="mt-3 text-[10px] text-white/40 hover:text-white/70 transition-colors uppercase tracking-widest">Admin</button>
     </footer>
+
+    <!-- Admin modal: guest list + RSVP status, password-gated. See firestore.rules
+         for why this gate is a convenience for the couple, not real access control. -->
+    <div id="adminModal" class="hidden fixed inset-0 z-[9998] bg-black/50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-sm shadow-lg max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-serif text-2xl">Guest List</h3>
+                <button id="adminCloseBtn" type="button"
+                    class="text-gray-400 hover:text-gray-700 text-2xl leading-none px-2">&times;</button>
+            </div>
+
+            <div id="adminGate">
+                <label for="adminPw" class="text-sm font-bold uppercase tracking-widest block mb-2">Password</label>
+                <div class="flex gap-2">
+                    <input id="adminPw" type="password"
+                        class="flex-1 p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding">
+                    <button id="adminUnlockBtn" type="button"
+                        class="bg-wedding text-white px-4 rounded-sm uppercase text-xs tracking-widest">Go</button>
+                </div>
+                <p id="adminGateMsg" class="text-sm text-red-600 mt-2"></p>
+            </div>
+
+            <div id="adminPanel" class="hidden">
+                <p id="adminSummary" class="text-sm text-gray-600 mb-4"></p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-300 uppercase text-xs tracking-widest text-gray-500">
+                                <th class="py-2 pr-3">Name</th>
+                                <th class="py-2 pr-3">Status</th>
+                                <th class="py-2 pr-3">Vegetarian</th>
+                                <th class="py-2">Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script>
@@ -870,155 +881,6 @@
             document.getElementById("mins").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
             document.getElementById("secs").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
         }, 1000);
-
-        // RSVP Logic
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCmS-12Ba1242022ahM5Rl9hUgVSKXlpdLPUqead2E0BmOm02EMKYb1HikZrsEH1RA/exec";
-        let currentGuestMax = 1;
-
-        function show(id) { document.getElementById(id).classList.remove('hidden'); }
-        function hide(id) { document.getElementById(id).classList.add('hidden'); }
-
-        function resetLookup() {
-            hide('rsvp-form');
-            hide('not-found');
-            hide('loading');
-            show('lookup');
-            document.getElementById('inviteCode').value = '';
-            document.getElementById('form-msg').innerText = '';
-        }
-
-        async function fetchGuestList() {
-            const resp = await fetch('guestlist.json.b64', { cache: "no-store" });
-            if (!resp.ok) throw new Error('Failed to fetch');
-            const b64 = (await resp.text()).trim();
-            try {
-                return JSON.parse(atob(b64));
-            } catch (err) {
-                const bin = atob(b64);
-                const bytes = new Uint8Array(bin.length);
-                for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-                return JSON.parse(new TextDecoder('utf-8').decode(bytes));
-            }
-        }
-
-        async function handleLookup() {
-            const code = document.getElementById('inviteCode').value.trim();
-            if (!code) return;
-
-            hide('lookup');
-            show('loading');
-
-            try {
-                const guestList = await fetchGuestList();
-                const entry = guestList.find(g => String(g.UniqueCode).toLowerCase() === code.toLowerCase());
-
-                hide('loading');
-
-                if (!entry) {
-                    show('not-found');
-                    return;
-                }
-
-                show('rsvp-form');
-                document.getElementById('field-code').value = entry.UniqueCode;
-                document.getElementById('field-group').value = entry.GroupName;
-                document.getElementById('welcome').innerText = `Welcome ${entry.GroupName}!`;
-
-                const ceremonyFieldset = document.getElementById('ceremony-fieldset');
-                const ceremonyYes = document.getElementById('attendCeremonyYes');
-                const ceremonyNo = document.getElementById('attendCeremonyNo');
-
-                if (entry.InvitedToCeremony !== true) {
-                    hide('ceremony-fieldset');
-                    ceremonyYes.disabled = true;
-                    ceremonyNo.checked = true;
-                    ceremonyNo.disabled = true;
-                } else {
-                    show('ceremony-fieldset');
-                    ceremonyYes.disabled = false;
-                    ceremonyNo.disabled = false;
-                }
-
-                currentGuestMax = parseInt(entry.MaxAllowedGuests || 1, 10);
-                const guestInput = document.getElementById('guestCount');
-                guestInput.max = currentGuestMax;
-                guestInput.value = Math.min(currentGuestMax, 1);
-
-                window.location.hash = "rsvp";
-            } catch (err) {
-                hide('loading');
-                show('not-found');
-                console.error(err);
-            }
-        }
-
-        document.getElementById('guestCount').addEventListener('input', (e) => {
-            const val = parseInt(e.target.value || 0, 10);
-            const msg = document.getElementById('form-msg');
-            if (val > currentGuestMax) msg.innerText = `Maximum allowed is ${currentGuestMax} guests.`;
-            else msg.innerText = '';
-        });
-
-        document.getElementById('rsvp-form').addEventListener('submit', async (ev) => {
-            ev.preventDefault();
-            const msg = document.getElementById('form-msg');
-            const guestCount = parseInt(document.getElementById('guestCount').value || 0, 10);
-            const attendCeremony = document.querySelector('input[name="AttendCeremony"]:checked')?.value === "Yes";
-            const attendReception = document.querySelector('input[name="AttendReception"]:checked')?.value === "Yes";
-
-            if (guestCount < 0 || guestCount > currentGuestMax) {
-                msg.innerText = `Guest count must be between 0 and ${currentGuestMax}.`;
-                return;
-            }
-            if (guestCount > 0 && !(attendCeremony || attendReception)) {
-                msg.innerText = 'Please select at least one event.';
-                return;
-            }
-
-            msg.innerText = "Submitting...";
-            msg.className = "text-center font-bold text-sm text-gray-600 mt-2";
-
-            const payload = {
-                UniqueCode: document.getElementById('field-code').value,
-                GroupName: document.getElementById('field-group').value,
-                AttendCeremony: attendCeremony ? "Yes" : "No",
-                AttendReception: attendReception ? "Yes" : "No",
-                GuestCount: guestCount,
-                Vegetarian: document.querySelector('input[name="Vegetarian"]:checked')?.value || "No",
-                Notes: document.getElementById('notes').value
-            };
-
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    body: JSON.stringify(payload),
-                    headers: { "Content-Type": "text/plain;charset=utf-8" }
-                });
-
-                if (res.ok) {
-                    msg.innerText = "✅ Thank you! Your RSVP has been recorded.";
-                    msg.className = "text-center font-bold text-sm text-green-600 mt-2";
-                    document.getElementById('rsvp-form').reset();
-                } else {
-                    msg.innerText = "❌ Submission failed. Try again.";
-                    msg.className = "text-center font-bold text-sm text-red-600 mt-2";
-                }
-            } catch (err) {
-                msg.innerText = "❌ Network error. Try again later.";
-                msg.className = "text-center font-bold text-sm text-red-600 mt-2";
-            }
-        });
-
-        // Automatically load RSVP form if "code" is in URL
-        window.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
-            if (code) {
-                document.getElementById('inviteCode').value = code;
-                handleLookup();
-                setTimeout(() => window.location.hash = "rsvp", 500);
-            }
-        });
 
         // ===== SCHEDULE REVEAL =====
         // Fires each item's CSS transition once as it enters the viewport, then
@@ -1232,6 +1094,240 @@
             dots.forEach((d, i) => d.addEventListener('click', () => showSlide(i)));
 
             setTimeout(() => showSlide(0), 350);
+        })();
+    </script>
+
+    <!-- Firebase-backed RSVP + admin guest list. See firestore.rules in the repo
+         for the security rules this depends on (not deployed by this file — they
+         have to be pasted into the Firebase console). -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import {
+            initializeFirestore, collection, doc, getDocs, updateDoc, serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD5PUi8VFK5hN7gZxjIJtBYhXeUnT3mugk",
+            authDomain: "weddingrsvps-62c62.firebaseapp.com",
+            projectId: "weddingrsvps-62c62",
+            storageBucket: "weddingrsvps-62c62.firebasestorage.app",
+            messagingSenderId: "984318696453",
+            appId: "1:984318696453:web:6aa8f36134ecb74a0d506c"
+        };
+        const app = initializeApp(firebaseConfig);
+        // Auto-detect long polling: some networks (corporate proxies, certain
+        // carriers/VPNs) don't play well with Firestore's default streaming
+        // transport and just hang instead of erroring. This falls back
+        // automatically only when needed, with no cost on a normal connection.
+        const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+        const guestsRef = collection(db, 'guests');
+
+        function escapeHtml(s) {
+            const div = document.createElement('div');
+            div.textContent = s;
+            return div.innerHTML;
+        }
+
+        // ===== RSVP: find your name, then respond =====
+        (function () {
+            const searchInput = document.getElementById('guestSearch');
+            const suggestionsEl = document.getElementById('guestSuggestions');
+            const searchMsg = document.getElementById('rsvp-search-msg');
+            const searchStep = document.getElementById('rsvp-search');
+            const form = document.getElementById('rsvp-form');
+            const welcome = document.getElementById('rsvp-welcome');
+            const formMsg = document.getElementById('rsvp-form-msg');
+            const confirmStep = document.getElementById('rsvp-confirm');
+            const confirmMsg = document.getElementById('rsvp-confirm-msg');
+
+            let guests = [];   // [{id, name, status, vegetarian, notes}]
+            let currentId = null;
+
+            async function loadGuests() {
+                searchMsg.textContent = 'Loading guest list...';
+                try {
+                    const snap = await getDocs(guestsRef);
+                    guests = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+                    searchMsg.textContent = '';
+                } catch (err) {
+                    console.error(err);
+                    searchMsg.textContent = "Couldn't load the guest list. Please refresh, or email us.";
+                }
+            }
+
+            function renderSuggestions(query) {
+                suggestionsEl.innerHTML = '';
+                const q = query.trim().toLowerCase();
+                if (!q) return;
+                const matches = guests.filter((g) => g.name.toLowerCase().includes(q)).slice(0, 8);
+                if (!matches.length) {
+                    suggestionsEl.innerHTML =
+                        '<p class="text-sm text-gray-500 text-center py-2">No matches. Check the spelling, or email us.</p>';
+                    return;
+                }
+                matches.forEach((g) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className =
+                        'text-left p-3 border border-gray-200 rounded-sm hover:border-wedding hover:bg-page transition-colors';
+                    btn.textContent = g.name;
+                    btn.addEventListener('click', () => selectGuest(g.id));
+                    suggestionsEl.appendChild(btn);
+                });
+            }
+
+            function selectGuest(id) {
+                const g = guests.find((x) => x.id === id);
+                if (!g) return;
+                currentId = id;
+                welcome.textContent = `Hi, ${g.name}!`;
+
+                document.querySelectorAll('input[name="Attending"]').forEach((r) => { r.checked = false; });
+                if (g.status === 'yes' || g.status === 'no') {
+                    document.querySelector(`input[name="Attending"][value="${g.status}"]`).checked = true;
+                }
+                document.querySelectorAll('input[name="Vegetarian"]').forEach((r) => {
+                    r.checked = r.value === (g.vegetarian || 'no');
+                });
+                document.getElementById('rsvpNotes').value = g.notes || '';
+                formMsg.textContent = '';
+
+                searchStep.classList.add('hidden');
+                form.classList.remove('hidden');
+                confirmStep.classList.add('hidden');
+            }
+
+            searchInput.addEventListener('input', (e) => renderSuggestions(e.target.value));
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                const q = searchInput.value.trim().toLowerCase();
+                const matches = guests.filter((g) => g.name.toLowerCase().includes(q));
+                if (matches.length === 1) selectGuest(matches[0].id);
+            });
+
+            document.getElementById('rsvpBackBtn').addEventListener('click', () => {
+                form.classList.add('hidden');
+                searchStep.classList.remove('hidden');
+                searchInput.value = '';
+                suggestionsEl.innerHTML = '';
+            });
+
+            document.getElementById('rsvpEditBtn').addEventListener('click', () => {
+                confirmStep.classList.add('hidden');
+                if (currentId) selectGuest(currentId);
+            });
+
+            form.addEventListener('submit', async (ev) => {
+                ev.preventDefault();
+                const attending = document.querySelector('input[name="Attending"]:checked');
+                if (!attending) {
+                    formMsg.textContent = 'Please choose whether you can make it.';
+                    formMsg.className = 'text-center font-bold text-sm text-red-600';
+                    return;
+                }
+                const status = attending.value; // 'yes' | 'no'
+                const vegetarian = status === 'yes'
+                    ? (document.querySelector('input[name="Vegetarian"]:checked')?.value || 'no')
+                    : null;
+                const notes = document.getElementById('rsvpNotes').value.trim();
+
+                formMsg.textContent = 'Submitting...';
+                formMsg.className = 'text-center font-bold text-sm text-gray-600';
+
+                try {
+                    await updateDoc(doc(db, 'guests', currentId), {
+                        status, vegetarian, notes, respondedAt: serverTimestamp()
+                    });
+                    const g = guests.find((x) => x.id === currentId);
+                    if (g) Object.assign(g, { status, vegetarian, notes });
+
+                    form.classList.add('hidden');
+                    confirmStep.classList.remove('hidden');
+                    confirmMsg.textContent = status === 'yes'
+                        ? "We can't wait to celebrate with you!"
+                        : "We'll miss you, but thank you for letting us know.";
+                } catch (err) {
+                    console.error(err);
+                    formMsg.textContent = 'Something went wrong. Please try again.';
+                    formMsg.className = 'text-center font-bold text-sm text-red-600';
+                }
+            });
+
+            loadGuests();
+        })();
+
+        // ===== ADMIN: password-gated, read-only guest list =====
+        (function () {
+            // Hex, not encryption — decodable by anyone who views source. This is a
+            // convenience gate for the couple, not real access control; see
+            // firestore.rules for what actually protects the data.
+            const ADMIN_PW_HEX = "6d696e69646f6e757473";
+            const ADMIN_PW = ADMIN_PW_HEX.match(/../g).map((h) => String.fromCharCode(parseInt(h, 16))).join('');
+
+            const openBtn = document.getElementById('adminOpenBtn');
+            const modal = document.getElementById('adminModal');
+            const closeBtn = document.getElementById('adminCloseBtn');
+            const gate = document.getElementById('adminGate');
+            const pwInput = document.getElementById('adminPw');
+            const unlockBtn = document.getElementById('adminUnlockBtn');
+            const gateMsg = document.getElementById('adminGateMsg');
+            const panel = document.getElementById('adminPanel');
+            const summary = document.getElementById('adminSummary');
+            const tbody = document.getElementById('adminTableBody');
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                if (sessionStorage.getItem('adminUnlocked') === '1') unlock();
+            }
+            function closeModal() { modal.classList.add('hidden'); }
+
+            async function unlock() {
+                gate.classList.add('hidden');
+                panel.classList.remove('hidden');
+                summary.textContent = 'Loading...';
+                tbody.innerHTML = '';
+                try {
+                    const snap = await getDocs(guestsRef);
+                    const rows = snap.docs
+                        .map((d) => ({ id: d.id, ...d.data() }))
+                        .sort((a, b) => a.name.localeCompare(b.name));
+                    const yes = rows.filter((r) => r.status === 'yes').length;
+                    const no = rows.filter((r) => r.status === 'no').length;
+                    const pending = rows.length - yes - no;
+                    summary.textContent = `${rows.length} invited — ${yes} attending, ${no} declined, ${pending} pending`;
+                    rows.forEach((r) => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'border-b border-gray-100';
+                        const statusLabel = r.status === 'yes' ? 'Attending' : r.status === 'no' ? 'Declined' : 'Pending';
+                        const statusColor = r.status === 'yes' ? 'text-green-600' : r.status === 'no' ? 'text-red-600' : 'text-gray-400';
+                        tr.innerHTML = `
+                            <td class="py-2 pr-3">${escapeHtml(r.name)}</td>
+                            <td class="py-2 pr-3 font-bold ${statusColor}">${statusLabel}</td>
+                            <td class="py-2 pr-3">${r.vegetarian === 'yes' ? 'Yes' : r.vegetarian === 'no' ? 'No' : '—'}</td>
+                            <td class="py-2">${escapeHtml(r.notes || '')}</td>`;
+                        tbody.appendChild(tr);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    summary.textContent = "Couldn't load the guest list.";
+                }
+            }
+
+            openBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            unlockBtn.addEventListener('click', () => {
+                if (pwInput.value === ADMIN_PW) {
+                    sessionStorage.setItem('adminUnlocked', '1');
+                    gateMsg.textContent = '';
+                    pwInput.value = '';
+                    unlock();
+                } else {
+                    gateMsg.textContent = 'Incorrect password.';
+                }
+            });
+            pwInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') unlockBtn.click(); });
         })();
     </script>
 </body>
