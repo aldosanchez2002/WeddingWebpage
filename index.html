@@ -88,18 +88,6 @@
             0%   { opacity: 0.6; transform: scale(1); }
             100% { opacity: 1;   transform: scale(1.06); }
         }
-        .intro-star {
-            position: absolute;
-            border-radius: 50%;
-            background: #fff;
-            animation: starTwinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
-            pointer-events: none;
-            z-index: 1;
-        }
-        @keyframes starTwinkle {
-            0%, 100% { opacity: var(--min-op, 0.1); transform: scale(1); }
-            50%       { opacity: var(--max-op, 0.5); transform: scale(1.6); }
-        }
         .intro-slide {
             position: absolute;
             inset: 0;
@@ -217,26 +205,28 @@
             background: rgb(208, 217, 193);
             transform: scale(1.5);
         }
-        /* Progress bar (per-slide countdown) */
+        /* Progress bar: countdown toward the next slide, Instagram-style along the
+           top edge rather than buried in the bottom control cluster. */
         #intro-progress {
             position: absolute;
-            bottom: 2.8rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: min(260px, 52vw);
-            height: 1px;
-            background: rgba(255,255,255,0.08);
+            top: calc(1.5rem + env(safe-area-inset-top));
+            left: 1.75rem;
+            right: 1.75rem;
+            height: 2px;
+            border-radius: 2px;
+            background: rgba(255,255,255,0.16);
             z-index: 10;
         }
         #intro-progress-fill {
             height: 100%;
             width: 0%;
-            background: rgba(170,180,156,0.5);
+            border-radius: 2px;
+            background: rgba(170,180,156,0.6);
         }
-        /* Press-and-hold feedback: the fill brightens and the bar itself grows a
-           little taller, so a held slide reads as paused rather than stalled. */
+        /* Press-and-hold feedback: the fill brightens and the bar grows a little
+           taller, so a held slide reads as paused rather than stalled. */
         #intro-overlay.is-holding #intro-progress {
-            height: 2px;
+            height: 3px;
             transition: height 0.2s ease;
         }
         #intro-overlay.is-holding #intro-progress-fill {
@@ -349,8 +339,10 @@
             }
             .intro-eyebrow { letter-spacing: 0.24em; margin-right: -0.24em; }
             .intro-subheadline { letter-spacing: 0.2em; margin-right: -0.2em; }
-            #intro-dots     { bottom: calc(5.9rem + env(safe-area-inset-bottom)); }
-            #intro-progress { bottom: calc(5rem + env(safe-area-inset-bottom)); width: 62vw; }
+            /* Dots need clearance above skip's own (non-pseudo) tap target, not just
+               its visible text, or the dots' 44px hit areas overlap it. */
+            #intro-dots     { bottom: calc(5rem + env(safe-area-inset-bottom)); }
+            #intro-progress { top: calc(1.1rem + env(safe-area-inset-top)); left: 1.1rem; right: 1.1rem; }
             #intro-skip {
                 bottom: calc(0.9rem + env(safe-area-inset-bottom));
                 right: 50%;
@@ -1037,24 +1029,6 @@
 
                 updateControls();
                 slideTimeout = setTimeout(() => showSlide(idx + 1), SLIDE_DURATION);
-            }
-
-            // Sprinkle twinkling stars
-            for (let i = 0; i < 60; i++) {
-                const s = document.createElement('div');
-                s.className = 'intro-star';
-                const sz = 1 + Math.random() * 1.6;
-                s.style.cssText = [
-                    `left:${Math.random()*100}%`,
-                    `top:${Math.random()*100}%`,
-                    `width:${sz}px`,
-                    `height:${sz}px`,
-                    `--dur:${2.5+Math.random()*4}s`,
-                    `--delay:-${Math.random()*5}s`,
-                    `--min-op:${(0.05+Math.random()*0.1).toFixed(2)}`,
-                    `--max-op:${(0.25+Math.random()*0.4).toFixed(2)}`
-                ].join(';');
-                overlay.appendChild(s);
             }
 
             // Instagram-stories navigation: tap the right side to go forward, the
