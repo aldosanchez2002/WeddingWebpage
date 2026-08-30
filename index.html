@@ -1426,11 +1426,30 @@
             const confirmYesBtn = document.getElementById('adminConfirmYes');
             const confirmNoBtn = document.getElementById('adminConfirmNo');
 
-            function openModal() {
-                modal.classList.remove('hidden');
-                if (sessionStorage.getItem('adminUnlocked') === '1') unlock();
+            // Re-lock: reset the gate/panel back to their initial state and clear
+            // the rendered list, so closing and reopening always asks again and
+            // never flashes the previous contents behind the gate.
+            function lock() {
+                panel.classList.add('hidden');
+                gate.classList.remove('hidden');
+                pwInput.value = '';
+                gateMsg.textContent = '';
+                summary.textContent = '';
+                tbody.innerHTML = '';
+                cancelRemove();
+                setActionMsg('');
             }
-            function closeModal() { cancelRemove(); modal.classList.add('hidden'); }
+
+            function openModal() {
+                lock();
+                modal.classList.remove('hidden');
+                pwInput.focus();
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                lock();
+            }
 
             // The shared list, not a copy — so adding or removing here is
             // immediately visible to the RSVP picker. Mutate it in place; never
@@ -1667,7 +1686,9 @@
 
             unlockBtn.addEventListener('click', () => {
                 if (pwInput.value === ADMIN_PW) {
-                    sessionStorage.setItem('adminUnlocked', '1');
+                    // Deliberately not remembered across opens — an unlock that
+                    // persisted in sessionStorage meant the gate never appeared
+                    // again for the rest of the tab's life, reloads included.
                     gateMsg.textContent = '';
                     pwInput.value = '';
                     unlock();
