@@ -43,7 +43,7 @@
         /* Timeline styling */
 
         /* Warm-to-dusk wash behind the schedule, tracking the day's actual arc
-           from a 4pm ceremony to an 11pm send-off. Static gradient, no JS. */
+           from a 4:30pm ceremony to an 11:45pm last dance. Static gradient, no JS. */
         .schedule-timeline {
             position: relative;
         }
@@ -461,7 +461,7 @@
             <div class="intro-eyebrow">save the date</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">January 16</div>
-            <div class="intro-subheadline">2027 &nbsp;·&nbsp; 4:00 PM</div>
+            <div class="intro-subheadline">2027 &nbsp;·&nbsp; 4:30 PM</div>
         </div>
 
         <!-- Slide 3: Venue -->
@@ -594,21 +594,21 @@
                         <img src="gallery/icon1.png" alt="Ceremony" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">04:00 PM</p>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">04:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon2.png" alt="Cocktail" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cocktail</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">05:00 PM</p>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">05:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon3.png" alt="Dinner" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Dinner</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">06:30 PM</p>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">07:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
@@ -622,14 +622,14 @@
                         <img src="gallery/icon5.png" alt="Cake Cutting" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">09:30 PM</p>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">10:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pl-12">
                     <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon6.png" alt="Homeline" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon6.png" alt="Last Dance" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Homeline</h3>
-                    <p class="text-sm uppercase tracking-widest text-gray-500">11:00 PM</p>
+                    <h3 class="font-serif text-2xl mb-1">Last Dance</h3>
+                    <p class="text-sm uppercase tracking-widest text-gray-500">11:45 PM</p>
                 </div>
             </div>
         </div>
@@ -911,7 +911,7 @@
         }
 
         // Countdown Logic
-        const targetDate = new Date("January 16, 2027 16:00:00").getTime();
+        const targetDate = new Date("January 16, 2027 16:30:00").getTime();
 
         const countdownTimer = setInterval(() => {
             const now = new Date().getTime();
