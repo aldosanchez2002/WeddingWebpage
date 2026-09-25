@@ -152,21 +152,31 @@
             justify-content: center;
             overflow: hidden;
         }
+
         #intro-overlay::before {
             content: '';
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 80% 60% at 22% 35%, rgba(170,180,156,0.07) 0%, transparent 65%),
-                radial-gradient(ellipse 60% 50% at 78% 65%, rgba(196,180,164,0.05) 0%, transparent 65%);
+                radial-gradient(ellipse 80% 60% at 22% 35%, rgba(170, 180, 156, 0.07) 0%, transparent 65%),
+                radial-gradient(ellipse 60% 50% at 78% 65%, rgba(196, 180, 164, 0.05) 0%, transparent 65%);
             pointer-events: none;
             z-index: 0;
             animation: ambientShift 12s ease-in-out infinite alternate;
         }
+
         @keyframes ambientShift {
-            0%   { opacity: 0.6; transform: scale(1); }
-            100% { opacity: 1;   transform: scale(1.06); }
+            0% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1.06);
+            }
         }
+
         .intro-slide {
             position: absolute;
             inset: 0;
@@ -179,14 +189,42 @@
             z-index: 2;
             pointer-events: none;
         }
+
         /* Only show the slide currently entering or exiting */
         .intro-slide.slide-enter,
-        .intro-slide.slide-exit { display: flex; }
+        .intro-slide.slide-exit {
+            display: flex;
+        }
+
         /* Whole-slide crossfade */
-        @keyframes introSlideIn  { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes introSlideOut { from { opacity: 1; } to { opacity: 0; } }
-        .intro-slide.slide-enter { animation: introSlideIn  0.65s ease forwards; }
-        .intro-slide.slide-exit  { animation: introSlideOut 0.55s ease forwards; }
+        @keyframes introSlideIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes introSlideOut {
+            from {
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        .intro-slide.slide-enter {
+            animation: introSlideIn 0.65s ease forwards;
+        }
+
+        .intro-slide.slide-exit {
+            animation: introSlideOut 0.55s ease forwards;
+        }
+
         .intro-eyebrow {
             font-family: 'Montserrat', sans-serif;
             font-size: clamp(0.7rem, 1.1vw, 0.75rem);
@@ -196,34 +234,38 @@
             margin-right: -0.3em;
             text-transform: uppercase;
             color: rgb(208, 217, 193);
-            text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
             opacity: 0;
             transform: translateY(10px);
             margin-bottom: 1.1rem;
         }
+
         .intro-divider {
             width: 0;
             height: 1.5px;
-            background: rgba(208,217,193,0.7);
-            box-shadow: 0 1px 6px rgba(0,0,0,0.4);
+            background: rgba(208, 217, 193, 0.7);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
             margin: 0 auto 1.4rem;
             opacity: 0;
         }
+
         .intro-headline {
             font-family: 'EB Garamond', serif;
             font-size: clamp(2.4rem, 12vw, 9rem);
             font-weight: 500;
             color: #f9f6f0;
             line-height: 1.05;
-            text-shadow: 0 2px 28px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.4);
+            text-shadow: 0 2px 28px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.4);
             margin: 0 0 1.2rem;
             opacity: 0;
             transform: translateY(18px) scale(0.97);
         }
+
         .intro-headline.italic-style {
             font-style: italic;
             font-size: clamp(2.2rem, 9vw, 6rem);
         }
+
         .intro-subheadline {
             font-family: 'Montserrat', sans-serif;
             font-size: clamp(0.78rem, 1.4vw, 0.88rem);
@@ -232,26 +274,49 @@
             margin-right: -0.26em;
             text-transform: uppercase;
             color: rgb(228, 216, 203);
-            text-shadow: 0 1px 10px rgba(0,0,0,0.6);
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
             opacity: 0;
             transform: translateY(10px);
         }
+
         /* Entering */
         .intro-slide.slide-enter .intro-eyebrow {
-            animation: introItemIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.15s;
+            animation: introItemIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.15s;
         }
+
         .intro-slide.slide-enter .intro-divider {
-            animation: introLineIn 0.85s cubic-bezier(0.16,1,0.3,1) forwards 0.3s;
+            animation: introLineIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s;
         }
+
         .intro-slide.slide-enter .intro-headline {
-            animation: introHeadIn 1.1s cubic-bezier(0.16,1,0.3,1) forwards 0.22s;
+            animation: introHeadIn 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.22s;
         }
+
         .intro-slide.slide-enter .intro-subheadline {
-            animation: introItemIn 0.9s cubic-bezier(0.16,1,0.3,1) forwards 0.6s;
+            animation: introItemIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.6s;
         }
-        @keyframes introItemIn  { to { opacity: 1; transform: translateY(0); } }
-        @keyframes introLineIn  { to { width: 50px; opacity: 1; } }
-        @keyframes introHeadIn  { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        @keyframes introItemIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes introLineIn {
+            to {
+                width: 50px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes introHeadIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         /* Dot indicators */
         #intro-dots {
             position: absolute;
@@ -263,16 +328,18 @@
             align-items: center;
             z-index: 10;
         }
+
         .intro-dot {
             position: relative;
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             transition: background 0.3s ease, transform 0.3s ease;
             cursor: pointer;
             pointer-events: all;
         }
+
         /* Invisible hit area around each dot for thumbs: full 44px tall, and half the
            16px gap to either side so neighbouring targets never overlap. */
         .intro-dot::after {
@@ -280,10 +347,12 @@
             position: absolute;
             inset: -19px -8px;
         }
+
         .intro-dot.active {
             background: rgb(208, 217, 193);
             transform: scale(1.5);
         }
+
         /* Progress bar: countdown toward the next slide, Instagram-style along the
            top edge rather than buried in the bottom control cluster. */
         #intro-progress {
@@ -293,24 +362,28 @@
             right: 1.75rem;
             height: 2px;
             border-radius: 2px;
-            background: rgba(255,255,255,0.16);
+            background: rgba(255, 255, 255, 0.16);
             z-index: 10;
         }
+
         #intro-progress-fill {
             height: 100%;
             width: 0%;
             border-radius: 2px;
-            background: rgba(170,180,156,0.6);
+            background: rgba(170, 180, 156, 0.6);
         }
+
         /* Press-and-hold feedback: the fill brightens and the bar grows a little
            taller, so a held slide reads as paused rather than stalled. */
         #intro-overlay.is-holding #intro-progress {
             height: 3px;
             transition: height 0.2s ease;
         }
+
         #intro-overlay.is-holding #intro-progress-fill {
-            background: rgba(208,217,193,0.85);
+            background: rgba(208, 217, 193, 0.85);
         }
+
         /* Arrow nav buttons */
         .intro-nav-btn {
             position: absolute;
@@ -321,27 +394,36 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            color: rgba(255,255,255,0.35);
+            color: rgba(255, 255, 255, 0.35);
             cursor: pointer;
             transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
             z-index: 10;
             pointer-events: all;
         }
+
         .intro-nav-btn:hover {
-            background: rgba(255,255,255,0.11);
-            color: rgba(255,255,255,0.75);
-            border-color: rgba(255,255,255,0.22);
+            background: rgba(255, 255, 255, 0.11);
+            color: rgba(255, 255, 255, 0.75);
+            border-color: rgba(255, 255, 255, 0.22);
         }
+
         .intro-nav-btn:disabled {
             opacity: 0.15;
             cursor: default;
             pointer-events: none;
         }
-        #intro-prev { left: 1.5rem; }
-        #intro-next { right: 1.5rem; }
+
+        #intro-prev {
+            left: 1.5rem;
+        }
+
+        #intro-next {
+            right: 1.5rem;
+        }
+
         /* Skip button */
         #intro-skip {
             position: absolute;
@@ -352,8 +434,8 @@
             font-weight: 500;
             letter-spacing: 0.22em;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.62);
-            text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+            color: rgba(255, 255, 255, 0.62);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
             background: transparent;
             border: none;
             cursor: pointer;
@@ -362,26 +444,44 @@
             z-index: 10;
             pointer-events: all;
         }
-        #intro-skip:hover { color: rgba(255,255,255,0.95); }
+
+        #intro-skip:hover {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
         /* Photo background slides */
         .intro-slide-bg {
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }
+
         /* Per-slide focal points — keeps couple visible on mobile portrait */
-        #intro-slide-0 { background-position: 50% center; }
-        #intro-slide-1 { background-position: 90% center; }
-        #intro-slide-2 { background-position: 20% 65%; }
-        #intro-slide-3 { background-position: 45% center; }
+        #intro-slide-0 {
+            background-position: 50% center;
+        }
+
+        #intro-slide-1 {
+            background-position: 90% center;
+        }
+
+        #intro-slide-2 {
+            background-position: 20% 65%;
+        }
+
+        #intro-slide-3 {
+            background-position: 45% center;
+        }
+
         .intro-slide-scrim {
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(ellipse 80% 55% at 50% 48%, rgba(4,5,4,0.52) 0%, rgba(4,5,4,0.16) 68%, rgba(4,5,4,0) 100%),
-                linear-gradient(to bottom, rgba(4,5,4,0.62) 0%, rgba(4,5,4,0.34) 34%, rgba(4,5,4,0.38) 64%, rgba(4,5,4,0.74) 100%);
+                radial-gradient(ellipse 80% 55% at 50% 48%, rgba(4, 5, 4, 0.52) 0%, rgba(4, 5, 4, 0.16) 68%, rgba(4, 5, 4, 0) 100%),
+                linear-gradient(to bottom, rgba(4, 5, 4, 0.62) 0%, rgba(4, 5, 4, 0.34) 34%, rgba(4, 5, 4, 0.38) 64%, rgba(4, 5, 4, 0.74) 100%);
             z-index: 1;
         }
+
         /* Fine grain over the photo. The intro sources are low-resolution, and a
            little texture reads as film rather than as a soft upscale. */
         .intro-slide-bg::after {
@@ -395,33 +495,66 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
             background-size: 160px 160px;
         }
+
         .intro-slide-bg .intro-eyebrow,
         .intro-slide-bg .intro-divider,
         .intro-slide-bg .intro-headline,
-        .intro-slide-bg .intro-subheadline { position: relative; z-index: 2; }
+        .intro-slide-bg .intro-subheadline {
+            position: relative;
+            z-index: 2;
+        }
+
         /* Overlay fade out */
         @keyframes overlayOut {
-            0%   { opacity: 1; }
-            100% { opacity: 0; }
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
+
         #intro-overlay.is-ending {
-            animation: overlayOut 1.4s cubic-bezier(0.7,0,0.84,0) forwards;
+            animation: overlayOut 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
             pointer-events: none;
         }
+
         /* ===== Phones ===== */
         @media (max-width: 640px) {
+
             /* Arrows overlap the headline at this width — swipe and the dots cover it. */
-            .intro-nav-btn { display: none; }
+            .intro-nav-btn {
+                display: none;
+            }
+
             .intro-slide {
                 padding: 1.5rem 1.25rem 7rem;
                 justify-content: center;
             }
-            .intro-eyebrow { letter-spacing: 0.24em; margin-right: -0.24em; }
-            .intro-subheadline { letter-spacing: 0.2em; margin-right: -0.2em; }
+
+            .intro-eyebrow {
+                letter-spacing: 0.24em;
+                margin-right: -0.24em;
+            }
+
+            .intro-subheadline {
+                letter-spacing: 0.2em;
+                margin-right: -0.2em;
+            }
+
             /* Dots need clearance above skip's own (non-pseudo) tap target, not just
                its visible text, or the dots' 44px hit areas overlap it. */
-            #intro-dots     { bottom: calc(5rem + env(safe-area-inset-bottom)); }
-            #intro-progress { top: calc(1.1rem + env(safe-area-inset-top)); left: 1.1rem; right: 1.1rem; }
+            #intro-dots {
+                bottom: calc(5rem + env(safe-area-inset-bottom));
+            }
+
+            #intro-progress {
+                top: calc(1.1rem + env(safe-area-inset-top));
+                left: 1.1rem;
+                right: 1.1rem;
+            }
+
             #intro-skip {
                 bottom: calc(0.9rem + env(safe-area-inset-bottom));
                 right: 50%;
@@ -484,12 +617,18 @@
 
         <!-- Left arrow -->
         <button id="intro-prev" class="intro-nav-btn" aria-label="Previous slide">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"></polyline></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15,18 9,12 15,6"></polyline>
+            </svg>
         </button>
 
         <!-- Right arrow -->
         <button id="intro-next" class="intro-nav-btn" aria-label="Next slide">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"></polyline></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9,18 15,12 9,6"></polyline>
+            </svg>
         </button>
 
         <!-- Dot indicators -->
@@ -500,7 +639,9 @@
             <div class="intro-dot" data-idx="3"></div>
         </div>
 
-        <div id="intro-progress"><div id="intro-progress-fill"></div></div>
+        <div id="intro-progress">
+            <div id="intro-progress-fill"></div>
+        </div>
         <button id="intro-skip">Skip Intro</button>
     </div>
 
@@ -556,19 +697,19 @@
                     <h2 class="font-serif text-4xl md:text-5xl">Our Love Story</h2>
                 </div>
                 <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center">
-                    We met in high school, two kids who had no idea they were about to meet their person. We fell
-                    in love fast, but when COVID hit, we said goodbye and went our separate ways to college, each
-                    carrying fond memories of what we'd shared.
+                    From Aldo:
+
                 </p>
                 <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center">
-                    Years later, we both found ourselves back in El Paso, each dropping off a younger sibling at our
-                    old high school. It was like no time had passed. We started talking again, and before long, we
-                    were dating again.
+                    We met in high school. The unstoppable force of love drew us in and we didn't try to fight it for a
+                    second. We both dove in headfirst and that boundless love is the reason we are all here today.
+
                 </p>
                 <p class="text-base md:text-lg leading-relaxed text-gray-600 text-left md:text-center">
-                    That Thanksgiving, Aldo proposed right in the middle of dinner at Isabella's family table,
-                    surrounded by tears, laughter, and cheers. We spent the summer in Seattle celebrating, and now
-                    we can't wait to marry the love of our lives with all of you there.
+                    During a beautiful Seattle hike, I looked at Isabella's smile and decided right then that I was
+                    going to marry her. Just 4 months later, I interrupted her family’s Thanksgiving meal to propose to
+                    the love of my life. Isabella is my perfect complement, and God's glory gave us the privilege of
+                    finding each other.
                 </p>
             </div>
             <div class="order-1 md:order-2 grid grid-cols-2 gap-2 sm:gap-4">
@@ -590,42 +731,48 @@
             </div>
             <div class="relative pl-2 sm:pl-6 md:pl-0 schedule-timeline">
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon1.png" alt="Ceremony" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">04:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon2.png" alt="Cocktail" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cocktail</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">05:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon3.png" alt="Dinner" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Dinner</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">07:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon4.png" alt="Party" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Party</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">08:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon5.png" alt="Cake Cutting" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">10:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pl-12">
-                    <div class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
+                    <div
+                        class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
                         <img src="gallery/icon6.png" alt="Last Dance" class="w-8 h-8 object-contain">
                     </div>
                     <h3 class="font-serif text-2xl mb-1">Last Dance</h3>
@@ -755,11 +902,11 @@
                             class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
                             Will you be attending?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendingYes" name="Attending" value="yes" class="accent-wedding"> Joyfully
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" id="attendingYes"
+                                    name="Attending" value="yes" class="accent-wedding"> Joyfully
                                 Accept</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    id="attendingNo" name="Attending" value="no" class="accent-wedding"> Regretfully
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" id="attendingNo"
+                                    name="Attending" value="no" class="accent-wedding"> Regretfully
                                 Decline</label>
                         </div>
                     </fieldset>
@@ -778,10 +925,10 @@
                             class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
                             Any dietary restriction?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    name="Vegetarian" value="yes" class="accent-wedding"> Vegetarian</label>
-                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio"
-                                    name="Vegetarian" value="no" checked class="accent-wedding"> No restriction</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
+                                    value="yes" class="accent-wedding"> Vegetarian</label>
+                            <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
+                                    value="no" checked class="accent-wedding"> No restriction</label>
                         </div>
                     </fieldset>
 
@@ -955,12 +1102,12 @@
 
         // ===== INTRO SEQUENCE =====
         (function () {
-            const overlay      = document.getElementById('intro-overlay');
+            const overlay = document.getElementById('intro-overlay');
             const progressFill = document.getElementById('intro-progress-fill');
-            const skipBtn      = document.getElementById('intro-skip');
-            const prevBtn      = document.getElementById('intro-prev');
-            const nextBtn      = document.getElementById('intro-next');
-            const dots         = document.querySelectorAll('.intro-dot');
+            const skipBtn = document.getElementById('intro-skip');
+            const prevBtn = document.getElementById('intro-prev');
+            const nextBtn = document.getElementById('intro-next');
+            const dots = document.querySelectorAll('.intro-dot');
 
             // Skip intro when guest uses a personalized code link
             const urlParams = new URLSearchParams(window.location.search);
@@ -969,10 +1116,10 @@
             const SLIDE_IDS = ['intro-slide-0', 'intro-slide-1', 'intro-slide-2', 'intro-slide-3'];
             const SLIDE_DURATION = 4000;
 
-            let currentIdx    = -1;
-            let slideStart    = null;
-            let progressRAF   = null;
-            let slideTimeout  = null;
+            let currentIdx = -1;
+            let slideStart = null;
+            let progressRAF = null;
+            let slideTimeout = null;
             let pausedElapsed = 0;    // ms already elapsed on the current slide when held
 
             document.documentElement.style.overflow = 'hidden';
@@ -1053,11 +1200,11 @@
             // left side to go back. Dragging still swipes, holding still pauses; the
             // dots, skip button and desktop arrows keep their own handlers and are
             // excluded from all three gestures.
-            const BACK_ZONE  = 0.33;   // left third of the viewport goes backwards
-            const SWIPE_MIN  = 45;     // px of horizontal travel that counts as a swipe
-            const TAP_SLOP   = 12;     // px of travel still forgiven as a tap/hold
+            const BACK_ZONE = 0.33;   // left third of the viewport goes backwards
+            const SWIPE_MIN = 45;     // px of horizontal travel that counts as a swipe
+            const TAP_SLOP = 12;     // px of travel still forgiven as a tap/hold
             const HOLD_DELAY = 180;    // ms of stillness before a press counts as a hold
-            const CONTROLS   = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn';
+            const CONTROLS = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn';
 
             function navFromX(clientX) {
                 if (clientX < window.innerWidth * BACK_ZONE) {
@@ -1104,7 +1251,7 @@
                 lastTouchEnd = Date.now();
                 const wasHolding = disarmHold();
                 if (touchX === null) return;
-                const t  = e.changedTouches[0];
+                const t = e.changedTouches[0];
                 const dx = t.clientX - touchX;
                 const dy = t.clientY - touchY;
                 touchX = touchY = null;
