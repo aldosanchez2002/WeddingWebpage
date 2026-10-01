@@ -653,8 +653,9 @@
             <a href="#story" class="hover:opacity-80 transition-opacity">Our Story</a>
             <a href="#schedule" class="hover:opacity-80 transition-opacity">Schedule</a>
             <a href="#details" class="hover:opacity-80 transition-opacity">Details</a>
+            <a href="#rsvp"
+                class="font-bold hover:opacity-80 transition-opacity md:bg-white md:text-wedding md:px-4 md:py-1 md:-my-1 md:rounded-full">RSVP</a>
             <a href="#registry" class="hover:opacity-80 transition-opacity">Registry</a>
-            <a href="#rsvp" class="hover:opacity-80 transition-opacity font-bold">RSVP</a>
         </div>
     </nav>
 
@@ -668,10 +669,17 @@
         <p class="text-xs sm:text-sm md:text-md uppercase tracking-widest mb-8">The Plaza Hotel at Pioneer Park<br>El
             Paso, TX</p>
 
-        <a href="https://www.google.com/maps?q=106+W+Mills+Ave,+El+Paso,+TX+79901" target="_blank"
-            class="bg-wedding text-white px-6 py-3 md:px-8 md:py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity mb-12 md:mb-16 shadow-md">
-            Directions
-        </a>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none">
+            <a href="#rsvp"
+                class="w-full sm:w-auto bg-wedding text-white px-10 py-3.5 rounded-sm uppercase tracking-widest text-sm font-bold hover:opacity-90 transition-opacity shadow-md">
+                RSVP
+            </a>
+            <a href="https://www.google.com/maps?q=106+W+Mills+Ave,+El+Paso,+TX+79901" target="_blank"
+                class="w-full sm:w-auto border border-wedding text-text px-8 py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-wedding hover:text-white transition-colors">
+                Directions
+            </a>
+        </div>
+        <p class="mt-3 mb-12 md:mb-16 text-xs uppercase tracking-widest text-gray-500">Kindly respond by December 1, 2026</p>
 
         <div class="mt-4 md:mt-8 text-center">
             <p class="font-serif text-xl md:text-2xl italic mb-4 md:mb-6">Let the Countdown begin</p>
@@ -813,72 +821,12 @@
         </div>
     </section>
 
-    <!-- Registry Section -->
-    <section id="registry" class="py-16 md:py-24 px-4 md:px-6 text-center">
-        <div
-            class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
-            <div class="mb-8">
-                <h2 class="font-serif text-4xl md:text-5xl">Gift Registry</h2>
-            </div>
-            <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6">Your presence is truly the best gift we could
-                ask for!</p>
-            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed max-w-xl mx-auto">
-                Since we're already settled in our home out of state, we've decided not to have a traditional gift
-                registry.
-                If you wish to bless us with a gift, cash gifts are incredibly appreciated.
-            </p>
-
-            <div class="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
-                <!-- Cashbox -->
-                <div
-                    class="flex-1 bg-white p-8 rounded-sm shadow-sm border border-[#E5E0D8] flex flex-col items-center justify-center text-center">
-                    <svg class="w-10 h-10 text-wedding mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    <h3 class="font-serif text-2xl mb-2 text-text">Cashbox</h3>
-                    <p class="text-xs uppercase tracking-widest text-gray-500">Day of the wedding</p>
-                </div>
-
-                <!-- Transfer Money -->
-                <div class="flex-1 bg-white p-8 rounded-sm shadow-sm border border-[#E5E0D8] flex flex-col items-center justify-center text-center cursor-pointer hover:border-wedding hover:shadow-md transition-all group"
-                    onclick="toggleTransferDetails()">
-                    <svg class="w-10 h-10 text-wedding mb-4 group-hover:scale-110 transition-transform" fill="none"
-                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                        </path>
-                    </svg>
-                    <h3 class="font-serif text-2xl mb-2 text-text">Transfer Money</h3>
-                    <p class="text-xs uppercase tracking-widest text-gray-500">Click for details</p>
-                </div>
-            </div>
-
-            <!-- Hidden Details Box -->
-            <div id="transfer-details"
-                class="hidden mt-6 max-w-2xl mx-auto bg-page p-6 rounded-sm border border-[#E5E0D8] shadow-inner text-center transition-all">
-                <div class="flex flex-col sm:flex-row justify-around gap-6">
-                    <div class="flex-1">
-                        <p class="font-bold text-sm uppercase tracking-widest text-wedding mb-2">CashApp</p>
-                        <p class="text-lg font-serif text-text">$AldoSanchezzz</p>
-                    </div>
-                    <div class="hidden sm:block w-px bg-[#E5E0D8]"></div>
-                    <div class="flex-1">
-                        <p class="font-bold text-sm uppercase tracking-widest text-wedding mb-2">Zelle</p>
-                        <p class="text-lg font-serif text-text">915-503-4696</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- RSVP Section -->
     <section id="rsvp" class="py-16 md:py-24 px-4 md:px-6 border-t border-[#E5E0D8]">
         <div class="max-w-2xl mx-auto bg-white p-6 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
             <div class="text-center mb-8">
                 <h2 class="font-serif text-4xl md:text-5xl">RSVP</h2>
+                <p class="mt-3 text-xs md:text-sm uppercase tracking-widest text-gray-500">Kindly respond by December 1, 2026</p>
             </div>
 
             <div id="rsvp-root">
@@ -964,6 +912,76 @@
                 at <a href="mailto:aldo.y.isabella@gmail.com" class="underline">aldo.y.isabella@gmail.com</a>.</p>
         </div>
     </section>
+
+    <!-- Registry Section -->
+    <section id="registry" class="py-16 md:py-24 px-4 md:px-6 text-center">
+        <div
+            class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
+            <div class="mb-8">
+                <h2 class="font-serif text-4xl md:text-5xl">Gift Registry</h2>
+            </div>
+            <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6">Your presence is truly the best gift we could
+                ask for!</p>
+            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed max-w-xl mx-auto">
+                Since we're already settled in our home out of state, we've decided not to have a traditional gift
+                registry.
+                If you wish to bless us with a gift, cash gifts are incredibly appreciated.
+            </p>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-6 max-w-2xl mx-auto">
+                <!-- Cashbox -->
+                <div
+                    class="flex-1 bg-white p-8 rounded-sm shadow-sm border border-[#E5E0D8] flex flex-col items-center justify-center text-center">
+                    <svg class="w-10 h-10 text-wedding mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <h3 class="font-serif text-2xl mb-2 text-text">Cashbox</h3>
+                    <p class="text-xs uppercase tracking-widest text-gray-500">Day of the wedding</p>
+                </div>
+
+                <!-- Transfer Money -->
+                <div class="flex-1 bg-white p-8 rounded-sm shadow-sm border border-[#E5E0D8] flex flex-col items-center justify-center text-center cursor-pointer hover:border-wedding hover:shadow-md transition-all group"
+                    onclick="toggleTransferDetails()">
+                    <svg class="w-10 h-10 text-wedding mb-4 group-hover:scale-110 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    <h3 class="font-serif text-2xl mb-2 text-text">Transfer Money</h3>
+                    <p class="text-xs uppercase tracking-widest text-gray-500">Click for details</p>
+                </div>
+            </div>
+
+            <!-- Hidden Details Box -->
+            <div id="transfer-details"
+                class="hidden mt-6 max-w-2xl mx-auto bg-page p-6 rounded-sm border border-[#E5E0D8] shadow-inner text-center transition-all">
+                <div class="flex flex-col sm:flex-row justify-around gap-6">
+                    <div class="flex-1">
+                        <p class="font-bold text-sm uppercase tracking-widest text-wedding mb-2">CashApp</p>
+                        <p class="text-lg font-serif text-text">$AldoSanchezzz</p>
+                    </div>
+                    <div class="hidden sm:block w-px bg-[#E5E0D8]"></div>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm uppercase tracking-widest text-wedding mb-2">Zelle</p>
+                        <p class="text-lg font-serif text-text">915-503-4696</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile-only floating RSVP bar. Shown once the guest scrolls past the
+         hero, hidden while the RSVP section or footer is on screen, and never
+         shown again on this device after they submit. -->
+    <a id="rsvp-float" href="#rsvp"
+        class="md:hidden fixed left-4 right-4 z-40 bg-wedding text-white text-center py-3.5 rounded-full uppercase tracking-widest text-sm font-bold shadow-lg transition-all duration-300 translate-y-24 opacity-0 pointer-events-none"
+        style="bottom: calc(1rem + env(safe-area-inset-bottom));">
+        RSVP by Dec 1
+    </a>
 
     <!-- Footer -->
     <footer class="bg-text text-white py-8 text-center">
@@ -1075,6 +1093,36 @@
             document.getElementById("mins").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
             document.getElementById("secs").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
         }, 1000);
+
+        // ===== FLOATING RSVP BAR (mobile) =====
+        // Visible only between the hero and the RSVP section/footer, and only
+        // until this device has submitted an RSVP.
+        (function () {
+            const bar = document.getElementById('rsvp-float');
+            if (!bar || !('IntersectionObserver' in window)) return;
+            let done = false;
+            try { done = localStorage.getItem('rsvpDone') === '1'; } catch (e) { }
+            const inView = { home: true, rsvp: false, footer: false };
+
+            function update() {
+                const show = !done && !inView.home && !inView.rsvp && !inView.footer;
+                bar.classList.toggle('translate-y-24', !show);
+                bar.classList.toggle('opacity-0', !show);
+                bar.classList.toggle('pointer-events-none', !show);
+            }
+
+            const watch = (el, key) => {
+                if (!el) return;
+                new IntersectionObserver(([entry]) => {
+                    inView[key] = entry.isIntersecting;
+                    update();
+                }).observe(el);
+            };
+            watch(document.getElementById('home'), 'home');
+            watch(document.getElementById('rsvp'), 'rsvp');
+            watch(document.querySelector('footer'), 'footer');
+            window.addEventListener('rsvp-done', () => { done = true; update(); });
+        })();
 
         // ===== SCHEDULE REVEAL =====
         // Fires each item's CSS transition once as it enters the viewport, then
@@ -1527,6 +1575,8 @@
                         status, vegetarian, notes, attendingCount, respondedAt: serverTimestamp()
                     });
                     if (g) Object.assign(g, { status, vegetarian, notes, attendingCount });
+                    try { localStorage.setItem('rsvpDone', '1'); } catch (e) { }
+                    window.dispatchEvent(new Event('rsvp-done'));
 
                     form.classList.add('hidden');
                     confirmStep.classList.remove('hidden');
