@@ -832,10 +832,18 @@
             <div id="rsvp-root">
                 <!-- Step 1: find your name -->
                 <div id="rsvp-search">
+                    <!-- Shown when this browser has already RSVP'd: one tap back to
+                         their own invitation to change the answer. -->
+                    <div id="rsvp-returning" class="hidden mb-6 p-4 bg-page border border-[#E5E0D8] rounded-sm text-center">
+                        <p id="rsvp-returning-text" class="text-sm text-gray-600 mb-3"></p>
+                        <button type="button" id="rsvpReturningBtn"
+                            class="bg-wedding text-white px-6 py-2 rounded-sm uppercase tracking-widest text-xs hover:opacity-90 transition-opacity">Update
+                            my RSVP</button>
+                    </div>
                     <label for="guestSearch"
                         class="text-sm font-bold uppercase tracking-widest text-center block mb-3">Find your name on
                         the guest list</label>
-                    <input id="guestSearch" type="text" autocomplete="off" placeholder="Start typing your name..."
+                    <input id="guestSearch" type="text" autocomplete="off" placeholder="Type your full name"
                         class="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding text-center bg-page">
                     <div id="guestSuggestions" class="mt-2 flex flex-col gap-1"></div>
                     <p id="rsvp-search-msg" class="text-center text-sm text-gray-500 mt-4"></p>
@@ -1014,9 +1022,34 @@
             <div id="adminPanel" class="hidden">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                     <p id="adminSummary" class="text-sm text-gray-600"></p>
-                    <button id="adminExportBtn" type="button"
-                        class="text-xs uppercase tracking-widest underline text-gray-500 hover:text-wedding transition-colors">Export
-                        CSV</button>
+                    <div class="flex gap-4">
+                        <button id="adminHistoryBtn" type="button"
+                            class="text-xs uppercase tracking-widest underline text-gray-500 hover:text-wedding transition-colors">History</button>
+                        <button id="adminExportBtn" type="button"
+                            class="text-xs uppercase tracking-widest underline text-gray-500 hover:text-wedding transition-colors">Export
+                            CSV</button>
+                    </div>
+                </div>
+
+                <!-- Every RSVP submission ever made, newest first. Entries can't be
+                     edited or deleted (see firestore.rules), so an overwritten
+                     answer can always be traced and restored from here. -->
+                <div id="adminHistory" class="hidden mb-6 p-4 bg-page border border-[#E5E0D8] rounded-sm">
+                    <p class="text-xs uppercase tracking-widest text-gray-500 mb-3">RSVP history (newest first)</p>
+                    <div class="overflow-x-auto max-h-80 overflow-y-auto">
+                        <table class="w-full text-xs text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-300 uppercase tracking-widest text-gray-500">
+                                    <th class="py-1 pr-3">When</th>
+                                    <th class="py-1 pr-3">Guest</th>
+                                    <th class="py-1 pr-3">Answer</th>
+                                    <th class="py-1 pr-3">Device</th>
+                                    <th class="py-1 pr-3">Visitor</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminHistoryBody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- Add a guest. "Seats" is how many people this one invitation
@@ -1345,9 +1378,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
         import {
-            initializeFirestore, collection, doc, getDocs, updateDoc, addDoc, deleteDoc,
-            serverTimestamp
+            initializeFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc, deleteDoc,
+            writeBatch, query, orderBy, limit, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD5PUi8VFK5hN7gZxjIJtBYhXeUnT3mugk",
@@ -1364,6 +1398,16 @@
         // automatically only when needed, with no cost on a normal connection.
         const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
         const guestsRef = collection(db, 'guests');
+        const historyRef = collection(db, 'rsvpHistory');
+
+        // Every visitor is silently signed in anonymously. The resulting uid is
+        // the "visitor ID": stable across tabs and visits in the same browser,
+        // issued by Firebase so it can't be forged as someone else's. The rules
+        // use it to allow one invitation per visitor and to stamp the history.
+        // Requires Anonymous sign-in to be enabled in the Firebase console.
+        const auth = getAuth(app);
+        const visitorReady = signInAnonymously(auth).then((cred) => cred.user.uid);
+        visitorReady.catch((err) => console.error('Anonymous sign-in failed', err));
 
         function escapeHtml(s) {
             const div = document.createElement('div');
@@ -1409,6 +1453,34 @@
             const guests = guestStore.list;
             let currentId = null;
 
+            // The invitation this visitor has already answered for, if any. Each
+            // visitor ID may answer for one invitation only (enforced again by the
+            // rules); they can change that answer as often as they like.
+            let boundGuestId = null;
+            const returningBox = document.getElementById('rsvp-returning');
+            const returningText = document.getElementById('rsvp-returning-text');
+
+            function renderReturning() {
+                const g = boundGuestId && guests.find((x) => x.id === boundGuestId);
+                returningBox.classList.toggle('hidden', !g);
+                if (g) returningText.textContent = `You've already responded for ${g.name}.`;
+            }
+
+            async function loadVisitor() {
+                try {
+                    const uid = await visitorReady;
+                    const snap = await getDoc(doc(db, 'visitors', uid));
+                    boundGuestId = snap.exists() ? snap.data().guestId : null;
+                    renderReturning();
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            document.getElementById('rsvpReturningBtn').addEventListener('click', () => {
+                if (boundGuestId) selectGuest(boundGuestId);
+            });
+
             async function loadGuests() {
                 searchMsg.textContent = 'Loading guest list...';
                 try {
@@ -1434,14 +1506,55 @@
                 }
             });
 
+            // Names only appear once the guest has typed every word of their name
+            // as it's listed, so the list can't be browsed by typing a letter or
+            // two. Small typos are forgiven (1 edit for words of 4-6 letters, 2
+            // for longer), accents and punctuation are ignored, and extra words
+            // are fine ("Maria Lopez" still finds a guest listed as "Maria").
+            const normWords = (str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+
+            // Edit distance where swapping two neighbouring letters ("Mraia")
+            // counts as one typo, like a missing, extra or wrong letter.
+            function editDistance(a, b) {
+                const d = Array.from({ length: a.length + 1 }, (_, i) =>
+                    Array.from({ length: b.length + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0)));
+                for (let i = 1; i <= a.length; i++) {
+                    for (let j = 1; j <= b.length; j++) {
+                        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+                            d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+                        }
+                    }
+                }
+                return d[a.length][b.length];
+            }
+
+            const wordMatches = (typed, listed) =>
+                editDistance(typed, listed) <= (listed.length <= 3 ? 0 : listed.length <= 6 ? 1 : 2);
+
+            function nameMatches(q, name) {
+                const typed = normWords(q);
+                const unused = [...typed];
+                return normWords(name).every((w) => {
+                    const i = unused.findIndex((t) => wordMatches(t, w));
+                    if (i === -1) return false;
+                    unused.splice(i, 1);
+                    return true;
+                });
+            }
+
+            const findMatches = (q) => guests.filter((g) => nameMatches(q, g.name));
+
             function renderSuggestions(query) {
                 suggestionsEl.innerHTML = '';
-                const q = query.trim().toLowerCase();
+                const q = query.trim();
                 if (!q) return;
-                const matches = guests.filter((g) => g.name.toLowerCase().includes(q)).slice(0, 8);
+                const matches = findMatches(q).slice(0, 5);
                 if (!matches.length) {
                     suggestionsEl.innerHTML =
-                        '<p class="text-sm text-gray-500 text-center py-2">No matches. Check the spelling, or email us.</p>';
+                        '<p class="text-sm text-gray-500 text-center py-2">Keep typing your full name as it appears on your invitation.</p>';
                     return;
                 }
                 matches.forEach((g) => {
@@ -1494,6 +1607,15 @@
             function selectGuest(id) {
                 const g = guests.find((x) => x.id === id);
                 if (!g) return;
+                if (boundGuestId && boundGuestId !== id) {
+                    const mine = guests.find((x) => x.id === boundGuestId);
+                    suggestionsEl.innerHTML = '';
+                    searchMsg.innerHTML =
+                        `This device has already been used to RSVP for <strong>${escapeHtml(mine ? mine.name : 'another guest')}</strong>. ` +
+                        'Each device can respond for one invitation. Need help? Email us.';
+                    return;
+                }
+                searchMsg.textContent = '';
                 currentId = id;
                 welcome.textContent = `Hi, ${g.name}!`;
 
@@ -1522,8 +1644,7 @@
             searchInput.addEventListener('input', (e) => renderSuggestions(e.target.value));
             searchInput.addEventListener('keydown', (e) => {
                 if (e.key !== 'Enter') return;
-                const q = searchInput.value.trim().toLowerCase();
-                const matches = guests.filter((g) => g.name.toLowerCase().includes(q));
+                const matches = findMatches(searchInput.value.trim());
                 if (matches.length === 1) selectGuest(matches[0].id);
             });
 
@@ -1532,6 +1653,7 @@
                 searchStep.classList.remove('hidden');
                 searchInput.value = '';
                 suggestionsEl.innerHTML = '';
+                renderReturning();
             });
 
             document.getElementById('rsvpEditBtn').addEventListener('click', () => {
@@ -1571,9 +1693,27 @@
                 formMsg.className = 'text-center font-bold text-sm text-gray-600';
 
                 try {
-                    await updateDoc(doc(db, 'guests', currentId), {
+                    const uid = await visitorReady;
+                    if (boundGuestId && boundGuestId !== currentId) throw new Error('visitor already bound');
+
+                    const batch = writeBatch(db);
+                    if (!boundGuestId) {
+                        batch.set(doc(db, 'visitors', uid), { guestId: currentId, createdAt: serverTimestamp() });
+                    }
+                    batch.update(doc(db, 'guests', currentId), {
                         status, vegetarian, notes, attendingCount, respondedAt: serverTimestamp()
                     });
+                    batch.set(doc(historyRef), {
+                        guestId: currentId,
+                        guestName: g ? g.name : '',
+                        status, vegetarian, notes, attendingCount,
+                        visitorId: uid,
+                        userAgent: navigator.userAgent.slice(0, 300),
+                        at: serverTimestamp()
+                    });
+                    await batch.commit();
+
+                    boundGuestId = currentId;
                     if (g) Object.assign(g, { status, vegetarian, notes, attendingCount });
                     try { localStorage.setItem('rsvpDone', '1'); } catch (e) { }
                     window.dispatchEvent(new Event('rsvp-done'));
@@ -1592,7 +1732,7 @@
                 }
             });
 
-            loadGuests();
+            loadGuests().then(loadVisitor);
         })();
 
         // ===== ADMIN: password-gated, read-only guest list =====
@@ -1633,6 +1773,8 @@
                 gateMsg.textContent = '';
                 summary.textContent = '';
                 tbody.innerHTML = '';
+                document.getElementById('adminHistory').classList.add('hidden');
+                document.getElementById('adminHistoryBody').innerHTML = '';
                 cancelRemove();
                 setActionMsg('');
             }
@@ -1862,6 +2004,58 @@
                 a.click();
                 URL.revokeObjectURL(url);
             }
+
+            // ----- History -----
+            const historyBtn = document.getElementById('adminHistoryBtn');
+            const historyBox = document.getElementById('adminHistory');
+            const historyBody = document.getElementById('adminHistoryBody');
+
+            function deviceLabel(ua) {
+                if (!ua) return '—';
+                const os = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android'
+                    : /Mac OS X/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /Linux/.test(ua) ? 'Linux' : 'Other';
+                const browser = /Instagram/.test(ua) ? 'Instagram app' : /FBAN|FBAV/.test(ua) ? 'Facebook app'
+                    : /Edg\//.test(ua) ? 'Edge' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox'
+                    : /Safari\//.test(ua) ? 'Safari' : 'Browser';
+                return `${os} · ${browser}`;
+            }
+
+            async function loadHistory() {
+                historyBody.innerHTML = '<tr><td colspan="5" class="py-2 text-gray-500">Loading...</td></tr>';
+                try {
+                    const snap = await getDocs(query(historyRef, orderBy('at', 'desc'), limit(500)));
+                    historyBody.innerHTML = '';
+                    if (snap.empty) {
+                        historyBody.innerHTML = '<tr><td colspan="5" class="py-2 text-gray-500">No responses yet.</td></tr>';
+                        return;
+                    }
+                    snap.docs.forEach((d) => {
+                        const h = d.data();
+                        const when = h.at && h.at.toDate ? h.at.toDate().toLocaleString() : '—';
+                        const answer = h.status === 'yes'
+                            ? `Attending (${Math.max(1, Number(h.attendingCount) || 1)})`
+                            : h.status === 'no' ? 'Declined' : '—';
+                        const tr = document.createElement('tr');
+                        tr.className = 'border-b border-gray-100 align-top';
+                        tr.innerHTML = `
+                            <td class="py-1 pr-3 whitespace-nowrap">${escapeHtml(when)}</td>
+                            <td class="py-1 pr-3">${escapeHtml(h.guestName || '')}</td>
+                            <td class="py-1 pr-3 whitespace-nowrap">${escapeHtml(answer)}</td>
+                            <td class="py-1 pr-3 whitespace-nowrap">${escapeHtml(deviceLabel(h.userAgent))}</td>
+                            <td class="py-1 pr-3 font-mono" title="${escapeHtml(h.visitorId || '')}">${escapeHtml((h.visitorId || '').slice(0, 6))}</td>`;
+                        historyBody.appendChild(tr);
+                    });
+                } catch (err) {
+                    console.error(err);
+                    historyBody.innerHTML = '<tr><td colspan="5" class="py-2 text-red-600">Couldn\'t load history.</td></tr>';
+                }
+            }
+
+            historyBtn.addEventListener('click', () => {
+                const opening = historyBox.classList.contains('hidden');
+                historyBox.classList.toggle('hidden', !opening);
+                if (opening) loadHistory();
+            });
 
             async function unlock() {
                 gate.classList.add('hidden');

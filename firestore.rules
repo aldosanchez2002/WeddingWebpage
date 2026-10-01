@@ -25,6 +25,10 @@ rules_version = '2';
 //   - an update may only touch the response fields (status, vegetarian,
 //     notes, respondedAt, maxGuests, attendingCount), so a guest RSVPing
 //     can't rewrite someone's name
+//   - RSVP answers can only be written by the visitor bound to that
+//     invitation (see /visitors below): one invitation per visitor
+//   - every RSVP is also appended to /rsvpHistory, which nobody can edit or
+//     delete, so an overwritten answer can always be traced and restored
 //   - the admin page has an "Export CSV" button; taking a backup now and
 //     then is the recovery path if the list is ever destroyed
 //
@@ -72,24 +76,71 @@ service cloud.firestore {
                     && request.resource.data.status == 'pending'
                     && request.resource.data.attendingCount == null;
 
-      // RSVP submissions and admin edits. The affectedKeys() guard is what
-      // stops a guest from overwriting another field (their own name most
-      // importantly) while responding.
+      // Two kinds of update, and nothing else:
       //
-      // maxGuests has to be in this list because the admin page edits seat
-      // counts inline, and — as noted above — the rules can't tell the admin
-      // from a guest. So a determined guest could raise their own seat count
-      // before confirming. The <= 20 cap in validGuest bounds how far that can
-      // go, and it is strictly less damaging than the delete access already
-      // granted below. Firebase Auth is the fix if that ever matters.
-      allow update: if request.resource.data.diff(resource.data).affectedKeys()
-                        .hasOnly(['status', 'vegetarian', 'notes', 'respondedAt',
-                                  'maxGuests', 'attendingCount'])
-                    && validGuest(request.resource.data);
+      // 1. Admin seat edits: only maxGuests (and attendingCount, pulled down
+      //    when seats shrink below it). The rules can't tell the admin from a
+      //    guest, so a determined guest could raise a seat count; the <= 20 cap
+      //    in validGuest bounds that.
+      //
+      // 2. RSVP answers: only the response fields, and only by the visitor
+      //    (anonymous Firebase Auth uid) bound to this invitation in
+      //    /visitors. getAfter() lets the binding be created in the same batch
+      //    as the first answer.
+      allow update: if validGuest(request.resource.data)
+                    && (
+                      request.resource.data.diff(resource.data).affectedKeys()
+                          .hasOnly(['maxGuests', 'attendingCount'])
+                      || (
+                        request.resource.data.diff(resource.data).affectedKeys()
+                            .hasOnly(['status', 'vegetarian', 'notes', 'respondedAt', 'attendingCount'])
+                        && request.auth != null
+                        && getAfter(/databases/$(database)/documents/visitors/$(request.auth.uid))
+                               .data.guestId == guestId
+                      )
+                    );
 
       // Removing a guest from the admin page. Unrestricted — see the note
       // at the top of this file.
       allow delete: if true;
+    }
+
+    // One document per visitor (anonymous uid) naming the single invitation
+    // that visitor may answer for. Created with their first RSVP and never
+    // changed, so a browser can't move on to answering for someone else. To
+    // free a device that picked the wrong name, delete its document here in
+    // the Firebase console.
+    match /visitors/{uid} {
+      allow get: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.keys().hasOnly(['guestId', 'createdAt'])
+                    && request.resource.data.guestId is string
+                    && exists(/databases/$(database)/documents/guests/$(request.resource.data.guestId))
+                    && request.resource.data.createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // Append-only log of every RSVP submission, read by the admin page's
+    // History view. Readable like the guest list (the admin page has no real
+    // auth), but entries can never be edited or deleted.
+    match /rsvpHistory/{entryId} {
+      allow read: if true;
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasOnly(['guestId', 'guestName', 'status',
+                           'vegetarian', 'notes', 'attendingCount', 'visitorId', 'userAgent', 'at'])
+                    && request.resource.data.visitorId == request.auth.uid
+                    && request.resource.data.at == request.time
+                    && getAfter(/databases/$(database)/documents/visitors/$(request.auth.uid))
+                           .data.guestId == request.resource.data.guestId
+                    && request.resource.data.guestName is string
+                    && request.resource.data.guestName.size() <= 120
+                    && request.resource.data.status in ['yes', 'no']
+                    && request.resource.data.notes is string
+                    && request.resource.data.notes.size() < 1000
+                    && request.resource.data.userAgent is string
+                    && request.resource.data.userAgent.size() <= 300;
+      allow update, delete: if false;
     }
   }
 }
