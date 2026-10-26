@@ -563,6 +563,45 @@
                 margin-right: -0.22em;
             }
         }
+
+        /* English / Spanish switch (nav + intro). The active language is
+           full-strength and underlined; the other is dimmed. */
+        .lang-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.15em;
+        }
+        .lang-switch button {
+            opacity: 0.6;
+            letter-spacing: inherit;
+            transition: opacity 0.2s ease;
+        }
+        .lang-switch button:hover { opacity: 0.9; }
+        .lang-switch button.active {
+            opacity: 1;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+        .lang-switch span { opacity: 0.5; }
+        .lang-switch-nav {
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 9999px;
+            padding: 0 0.7rem;
+        }
+        .lang-switch-intro {
+            position: absolute;
+            top: calc(2.4rem + env(safe-area-inset-top));
+            right: 1.75rem;
+            z-index: 10;
+            pointer-events: all;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            color: #fff;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+        }
+        .lang-switch-intro button { padding: 0.4rem 0.2rem; }
     </style>
 </head>
 
@@ -582,25 +621,25 @@
         <!-- Slide 1: Names -->
         <div class="intro-slide intro-slide-bg" id="intro-slide-0" style="background-image:url('gallery/intro1.jpg')">
             <div class="intro-slide-scrim"></div>
-            <div class="intro-eyebrow">a wedding celebration</div>
+            <div class="intro-eyebrow" data-i18n="intro.eyebrow0">a wedding celebration</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">Aldo &amp; Isabella</div>
-            <div class="intro-subheadline">together forever</div>
+            <div class="intro-subheadline" data-i18n="intro.sub0">together forever</div>
         </div>
 
         <!-- Slide 2: Date -->
         <div class="intro-slide intro-slide-bg" id="intro-slide-1" style="background-image:url('gallery/intro2.jpg')">
             <div class="intro-slide-scrim"></div>
-            <div class="intro-eyebrow">save the date</div>
+            <div class="intro-eyebrow" data-i18n="intro.eyebrow1">save the date</div>
             <div class="intro-divider"></div>
-            <div class="intro-headline">January 16</div>
+            <div class="intro-headline" data-i18n="intro.head1">January 16</div>
             <div class="intro-subheadline">2027 &nbsp;·&nbsp; 4:45 PM</div>
         </div>
 
         <!-- Slide 3: Venue -->
         <div class="intro-slide intro-slide-bg" id="intro-slide-2" style="background-image:url('gallery/intro3.jpg')">
             <div class="intro-slide-scrim"></div>
-            <div class="intro-eyebrow">join us at</div>
+            <div class="intro-eyebrow" data-i18n="intro.eyebrow2">join us at</div>
             <div class="intro-divider"></div>
             <div class="intro-headline">The Plaza Hotel</div>
             <div class="intro-subheadline">El Paso, Texas</div>
@@ -609,14 +648,14 @@
         <!-- Slide 4: Invitation -->
         <div class="intro-slide intro-slide-bg" id="intro-slide-3" style="background-image:url('gallery/intro4.jpg')">
             <div class="intro-slide-scrim"></div>
-            <div class="intro-eyebrow">you are</div>
+            <div class="intro-eyebrow" data-i18n="intro.eyebrow3">you are</div>
             <div class="intro-divider"></div>
-            <div class="intro-headline italic-style">cordially invited</div>
-            <div class="intro-subheadline">to witness our love story</div>
+            <div class="intro-headline italic-style" data-i18n="intro.head3">cordially invited</div>
+            <div class="intro-subheadline" data-i18n="intro.sub3">to witness our love story</div>
         </div>
 
         <!-- Left arrow -->
-        <button id="intro-prev" class="intro-nav-btn" aria-label="Previous slide">
+        <button id="intro-prev" class="intro-nav-btn" aria-label="Previous slide" data-i18n-aria="intro.prev">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15,18 9,12 15,6"></polyline>
@@ -624,7 +663,7 @@
         </button>
 
         <!-- Right arrow -->
-        <button id="intro-next" class="intro-nav-btn" aria-label="Next slide">
+        <button id="intro-next" class="intro-nav-btn" aria-label="Next slide" data-i18n-aria="intro.next">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                 stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9,18 15,12 9,6"></polyline>
@@ -642,20 +681,28 @@
         <div id="intro-progress">
             <div id="intro-progress-fill"></div>
         </div>
-        <button id="intro-skip">Skip Intro</button>
+        <button id="intro-skip" data-i18n="intro.skip">Skip Intro</button>
+        <!-- Language switch on the intro too, so Spanish speakers aren't stuck
+             reading the English slides. -->
+        <div class="lang-switch lang-switch-intro" role="group" aria-label="Language">
+            <button type="button" data-lang="en">EN</button><span aria-hidden="true">|</span><button type="button" data-lang="es">ES</button>
+        </div>
     </div>
 
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 w-full z-50 bg-wedding text-white shadow-md">
         <div
             class="max-w-5xl mx-auto px-4 py-3 md:px-6 md:py-4 flex flex-wrap justify-center gap-3 md:gap-6 text-xs md:text-sm uppercase tracking-widest font-medium">
-            <a href="#home" class="hover:opacity-80 transition-opacity">Home</a>
-            <a href="#story" class="hover:opacity-80 transition-opacity">Our Story</a>
-            <a href="#schedule" class="hover:opacity-80 transition-opacity">Schedule</a>
-            <a href="#details" class="hover:opacity-80 transition-opacity">Details</a>
+            <a href="#home" class="hover:opacity-80 transition-opacity" data-i18n="nav.home">Home</a>
+            <a href="#story" class="hover:opacity-80 transition-opacity" data-i18n="nav.story">Our Story</a>
+            <a href="#schedule" class="hover:opacity-80 transition-opacity" data-i18n="nav.schedule">Schedule</a>
+            <a href="#details" class="hover:opacity-80 transition-opacity" data-i18n="nav.details">Details</a>
             <a href="#rsvp"
-                class="md:font-bold hover:opacity-80 transition-opacity md:bg-white md:text-wedding md:px-4 md:py-1 md:-my-1 md:rounded-full">RSVP</a>
-            <a href="#registry" class="hover:opacity-80 transition-opacity">Registry</a>
+                class="md:font-bold hover:opacity-80 transition-opacity md:bg-white md:text-wedding md:px-4 md:py-1 md:-my-1 md:rounded-full" data-i18n="nav.rsvp">RSVP</a>
+            <a href="#registry" class="hover:opacity-80 transition-opacity" data-i18n="nav.registry">Registry</a>
+            <div class="lang-switch lang-switch-nav" role="group" aria-label="Language">
+                <button type="button" data-lang="en">EN</button><span aria-hidden="true">|</span><button type="button" data-lang="es">ES</button>
+            </div>
         </div>
     </nav>
 
@@ -663,36 +710,36 @@
     <section id="home"
         class="min-h-screen flex flex-col items-center justify-center text-center px-4 md:px-6 pt-24 pb-12">
         <h1 class="font-serif text-5xl sm:text-6xl md:text-8xl mb-4 md:mb-6">Aldo & Isabella</h1>
-        <img src="gallery/image1.png" alt="Aldo and Isabella"
+        <img src="gallery/image1.png" alt="Aldo and Isabella" data-i18n-alt="hero.alt"
             class="w-full max-w-lg mx-auto h-48 sm:h-64 md:h-96 object-cover rounded-sm shadow-lg mb-6">
-        <p class="text-lg sm:text-xl md:text-2xl font-serif italic mb-2">January 16, 2027</p>
+        <p class="text-lg sm:text-xl md:text-2xl font-serif italic mb-2" data-i18n="date.long">January 16, 2027</p>
         <p class="text-xs sm:text-sm md:text-md uppercase tracking-widest mb-8">The Plaza Hotel at Pioneer Park<br>El
             Paso, TX</p>
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none">
             <a href="#rsvp"
-                class="w-full sm:w-auto bg-wedding text-white px-10 py-3.5 rounded-sm uppercase tracking-widest text-sm font-bold hover:opacity-90 transition-opacity shadow-md">
+                class="w-full sm:w-auto bg-wedding text-white px-10 py-3.5 rounded-sm uppercase tracking-widest text-sm font-bold hover:opacity-90 transition-opacity shadow-md" data-i18n="hero.rsvp">
                 RSVP
             </a>
             <a href="https://www.google.com/maps?q=106+W+Mills+Ave,+El+Paso,+TX+79901" target="_blank"
-                class="w-full sm:w-auto border border-wedding text-text px-8 py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-wedding hover:text-white transition-colors">
+                class="w-full sm:w-auto border border-wedding text-text px-8 py-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-wedding hover:text-white transition-colors" data-i18n="hero.directions">
                 Directions
             </a>
         </div>
-        <p class="mt-3 mb-12 md:mb-16 text-xs uppercase tracking-widest text-gray-500">Kindly respond by December 10, 2026</p>
+        <p class="mt-3 mb-12 md:mb-16 text-xs uppercase tracking-widest text-gray-500" data-i18n="deadline">Kindly respond by December 10, 2026</p>
 
         <div class="mt-4 md:mt-8 text-center">
-            <p class="font-serif text-xl md:text-2xl italic mb-4 md:mb-6">Let the Countdown begin</p>
+            <p class="font-serif text-xl md:text-2xl italic mb-4 md:mb-6" data-i18n="countdown.title">Let the Countdown begin</p>
             <div id="countdown"
                 class="flex gap-3 sm:gap-4 md:gap-8 justify-center uppercase tracking-widest text-[10px] sm:text-xs font-bold">
                 <div class="flex flex-col items-center"><span id="days"
-                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Days</div>
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span><span data-i18n="countdown.days">Days</span></div>
                 <div class="flex flex-col items-center"><span id="hours"
-                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Hours</div>
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span><span data-i18n="countdown.hours">Hours</span></div>
                 <div class="flex flex-col items-center"><span id="mins"
-                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Minutes</div>
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span><span data-i18n="countdown.mins">Minutes</span></div>
                 <div class="flex flex-col items-center"><span id="secs"
-                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span>Seconds</div>
+                        class="text-3xl md:text-4xl font-serif font-normal mb-1">00</span><span data-i18n="countdown.secs">Seconds</span></div>
             </div>
         </div>
     </section>
@@ -702,18 +749,17 @@
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div class="order-2 md:order-1">
                 <div class="text-left md:text-center mb-6">
-                    <h2 class="font-serif text-4xl md:text-5xl">Our Love Story</h2>
+                    <h2 class="font-serif text-4xl md:text-5xl" data-i18n="story.title">Our Love Story</h2>
                 </div>
-                <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center">
+                <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center" data-i18n="story.from">
                     From Aldo:
-
                 </p>
-                <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center">
+                <p class="text-base md:text-lg leading-relaxed text-gray-600 mb-4 text-left md:text-center" data-i18n="story.p1">
                     We met in high school. The unstoppable force of love drew us in and we didn't try to fight it for a
                     second. We both dove in headfirst and that boundless love is the reason we are all here today.
 
                 </p>
-                <p class="text-base md:text-lg leading-relaxed text-gray-600 text-left md:text-center">
+                <p class="text-base md:text-lg leading-relaxed text-gray-600 text-left md:text-center" data-i18n="story.p2">
                     During a beautiful Seattle hike, I looked at Isabella's smile and decided right then and there that I was
                     going to marry her. Just 4 months later, I interrupted her family’s Thanksgiving meal to propose to
                     the love of my life. Isabella is my perfect complement, and God's glory gave us the privilege of
@@ -721,11 +767,11 @@
                 </p>
             </div>
             <div class="order-1 md:order-2 grid grid-cols-2 gap-2 sm:gap-4">
-                <img src="gallery/image2.png" alt="Our Story 1"
+                <img src="gallery/image2.png" alt="Our Story 1" data-i18n-alt="story.alt1"
                     class="w-full h-32 sm:h-48 md:h-64 object-cover rounded-sm shadow-lg">
-                <img src="gallery/image3.png" alt="Our Story 2"
+                <img src="gallery/image3.png" alt="Our Story 2" data-i18n-alt="story.alt2"
                     class="w-full h-32 sm:h-48 md:h-64 object-cover rounded-sm shadow-lg">
-                <img src="gallery/image4.png" alt="Our Story 3"
+                <img src="gallery/image4.png" alt="Our Story 3" data-i18n-alt="story.alt3"
                     class="w-full h-40 sm:h-64 md:h-80 object-cover rounded-sm shadow-lg col-span-2">
             </div>
         </div>
@@ -735,55 +781,55 @@
     <section id="schedule" class="py-16 md:py-24 px-4 md:px-6">
         <div class="max-w-3xl mx-auto">
             <div class="text-center mb-12 md:mb-16">
-                <h2 class="font-serif text-4xl md:text-5xl">Schedule</h2>
+                <h2 class="font-serif text-4xl md:text-5xl" data-i18n="schedule.title">Schedule</h2>
             </div>
             <div class="relative pl-2 sm:pl-6 md:pl-0 schedule-timeline">
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon1.png" alt="Ceremony" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon1.png" alt="Ceremony" data-i18n-alt="schedule.ceremony" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Ceremony</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.ceremony">Ceremony</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">04:45 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon2.png" alt="Cocktail" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon2.png" alt="Cocktail" data-i18n-alt="schedule.cocktail" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Cocktail</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.cocktail">Cocktail</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">05:45 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon3.png" alt="Dinner" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon3.png" alt="Dinner" data-i18n-alt="schedule.dinner" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Dinner</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.dinner">Dinner</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">07:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon4.png" alt="Party" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon4.png" alt="Party" data-i18n-alt="schedule.party" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Party</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.party">Party</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">08:00 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pb-10 md:pb-12 pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon5.png" alt="Cake Cutting" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon5.png" alt="Cake Cutting" data-i18n-alt="schedule.cake" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Cake Cutting</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.cake">Cake Cutting</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">10:30 PM</p>
                 </div>
                 <div class="md:w-1/2 md:ml-auto relative timeline-item pl-12">
                     <div
                         class="absolute left-0 top-0 w-8 h-8 flex items-center justify-center bg-page z-10 schedule-marker">
-                        <img src="gallery/icon6.png" alt="Last Dance" class="w-8 h-8 object-contain">
+                        <img src="gallery/icon6.png" alt="Last Dance" data-i18n-alt="schedule.lastdance" class="w-8 h-8 object-contain">
                     </div>
-                    <h3 class="font-serif text-2xl mb-1">Last Dance</h3>
+                    <h3 class="font-serif text-2xl mb-1" data-i18n="schedule.lastdance">Last Dance</h3>
                     <p class="text-sm uppercase tracking-widest text-gray-500">11:45 PM</p>
                 </div>
             </div>
@@ -794,32 +840,32 @@
     <section id="details" class="py-16 md:py-24 px-4 md:px-6">
         <div class="max-w-5xl mx-auto text-center">
             <div class="mb-12">
-                <h2 class="font-serif text-4xl md:text-5xl">Details</h2>
+                <h2 class="font-serif text-4xl md:text-5xl" data-i18n="details.title">Details</h2>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 mb-8 md:mb-12">
                 <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
-                    <h3 class="font-serif text-xl mb-2">Parking</h3>
-                    <p class="text-sm text-gray-600">Onsite valet parking is available at the hotel for $17.</p>
+                    <h3 class="font-serif text-xl mb-2" data-i18n="details.parking">Parking</h3>
+                    <p class="text-sm text-gray-600" data-i18n="details.parkingText">Onsite valet parking is available at the hotel for $17.</p>
                 </div>
                 <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
-                    <h3 class="font-serif text-xl mb-2">Dress Code</h3>
-                    <p class="text-sm text-gray-600">Formal attire — black tie. Vibrant colors encouraged!</p>
+                    <h3 class="font-serif text-xl mb-2" data-i18n="details.dress">Dress Code</h3>
+                    <p class="text-sm text-gray-600" data-i18n="details.dressText">Formal attire — black tie. Vibrant colors encouraged!</p>
                 </div>
                 <div class="p-6 bg-white rounded-sm shadow-sm border border-[#E5E0D8]">
-                    <h3 class="font-serif text-xl mb-2">Hotel Discount</h3>
-                    <p class="text-sm text-gray-600 mb-4">Book through our group link to get the wedding rate.</p>
+                    <h3 class="font-serif text-xl mb-2" data-i18n="details.hotel">Hotel Discount</h3>
+                    <p class="text-sm text-gray-600 mb-4" data-i18n="details.hotelText">Book through our group link to get the wedding rate.</p>
                     <a href="https://reservations.plazahotelelpaso.com/112934?groupID=5068006#/guestsandrooms"
                         target="_blank" rel="noopener"
-                        class="inline-block bg-wedding text-white px-5 py-2 rounded-sm uppercase tracking-widest text-xs hover:opacity-90 transition-opacity">Book
+                        class="inline-block bg-wedding text-white px-5 py-2 rounded-sm uppercase tracking-widest text-xs hover:opacity-90 transition-opacity" data-i18n="details.book">Book
                         a Room</a>
                 </div>
             </div>
 
             <div class="bg-white p-6 md:p-10 rounded-sm shadow-sm border border-[#E5E0D8] flex flex-col items-center">
-                <h3 class="font-serif text-3xl mb-2">Vision Board</h3>
-                <p class="text-sm text-gray-600 mb-8">Check your invitation for color palette inspiration.</p>
-                <img src="gallery/vision-board.webp" alt="Vision board: the Plaza Hotel, dress inspiration and our color palette" loading="lazy"
+                <h3 class="font-serif text-3xl mb-2" data-i18n="details.vision">Vision Board</h3>
+                <p class="text-sm text-gray-600 mb-8" data-i18n="details.visionText">Check your invitation for color palette inspiration.</p>
+                <img src="gallery/vision-board.webp" alt="Vision board: the Plaza Hotel, dress inspiration and our color palette" data-i18n-alt="details.visionAlt" loading="lazy"
                     class="w-full max-w-4xl h-auto object-contain rounded-sm shadow-sm">
             </div>
         </div>
@@ -829,17 +875,17 @@
     <section id="rsvp" class="py-16 md:py-24 px-4 md:px-6 border-t border-[#E5E0D8]">
         <div class="max-w-2xl mx-auto bg-white p-6 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
             <div class="text-center mb-8">
-                <h2 class="font-serif text-4xl md:text-5xl">RSVP</h2>
-                <p class="mt-3 text-xs md:text-sm uppercase tracking-widest text-gray-500">Kindly respond by December 10, 2026</p>
+                <h2 class="font-serif text-4xl md:text-5xl" data-i18n="rsvp.title">RSVP</h2>
+                <p class="mt-3 text-xs md:text-sm uppercase tracking-widest text-gray-500" data-i18n="deadline">Kindly respond by December 10, 2026</p>
             </div>
 
             <div id="rsvp-root">
                 <!-- Step 1: find your name -->
                 <div id="rsvp-search">
                     <label for="guestSearch"
-                        class="text-sm font-bold uppercase tracking-widest text-center block mb-3">Find your name on
+                        class="text-sm font-bold uppercase tracking-widest text-center block mb-3" data-i18n="rsvp.find">Find your name on
                         the guest list</label>
-                    <input id="guestSearch" type="text" autocomplete="off" placeholder="Type your full name"
+                    <input id="guestSearch" type="text" autocomplete="off" placeholder="Type your full name" data-i18n-placeholder="rsvp.searchPh"
                         class="w-full p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding text-center bg-page">
                     <div id="guestSuggestions" class="mt-2 flex flex-col gap-1"></div>
                     <p id="rsvp-search-msg" class="text-center text-sm text-gray-500 mt-4"></p>
@@ -851,21 +897,21 @@
 
                     <fieldset class="border border-gray-200 p-4 rounded-sm bg-page">
                         <legend
-                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white" data-i18n="rsvp.attending">
                             Will you be attending?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" id="attendingYes"
-                                    name="Attending" value="yes" class="accent-wedding"> Joyfully
-                                Accept</label>
+                                    name="Attending" value="yes" class="accent-wedding"> <span data-i18n="rsvp.accept">Joyfully
+                                Accept</span></label>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" id="attendingNo"
-                                    name="Attending" value="no" class="accent-wedding"> Regretfully
-                                Decline</label>
+                                    name="Attending" value="no" class="accent-wedding"> <span data-i18n="rsvp.decline">Regretfully
+                                Decline</span></label>
                         </div>
                     </fieldset>
 
                     <!-- Only rendered for invitations covering more than one person. -->
                     <div id="party-size-wrap" class="hidden flex-col gap-2">
-                        <label for="partySize" class="font-bold text-xs md:text-sm uppercase tracking-widest">How
+                        <label for="partySize" class="font-bold text-xs md:text-sm uppercase tracking-widest" data-i18n="rsvp.howMany">How
                             many of you are coming?</label>
                         <select id="partySize"
                             class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page"></select>
@@ -874,20 +920,20 @@
 
                     <fieldset id="veg-fieldset" class="border border-gray-200 p-4 rounded-sm bg-page">
                         <legend
-                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white">
+                            class="font-bold text-xs md:text-sm uppercase tracking-widest px-2 text-gray-700 bg-white" data-i18n="rsvp.diet">
                             Any dietary restriction?</legend>
                         <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-3">
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="yes" class="accent-wedding"> Vegetarian</label>
+                                    value="yes" class="accent-wedding"> <span data-i18n="rsvp.veg">Vegetarian</span></label>
                             <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="Vegetarian"
-                                    value="no" checked class="accent-wedding"> No restriction</label>
+                                    value="no" checked class="accent-wedding"> <span data-i18n="rsvp.noRestriction">No restriction</span></label>
                         </div>
                     </fieldset>
 
                     <div class="flex flex-col gap-2">
-                        <label for="rsvpNotes" class="font-bold text-xs md:text-sm uppercase tracking-widest">Notes
+                        <label for="rsvpNotes" class="font-bold text-xs md:text-sm uppercase tracking-widest" data-i18n="rsvp.notes">Notes
                             (optional)</label>
-                        <textarea id="rsvpNotes" rows="3" placeholder="Song requests, accessibility needs, etc."
+                        <textarea id="rsvpNotes" rows="3" placeholder="Song requests, accessibility needs, etc." data-i18n-placeholder="rsvp.notesPh"
                             class="p-3 border border-gray-300 rounded-sm focus:outline-none focus:border-wedding bg-page"></textarea>
                     </div>
 
@@ -895,25 +941,25 @@
 
                     <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-4">
                         <button type="submit"
-                            class="w-full sm:flex-1 bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity shadow-sm">Submit
+                            class="w-full sm:flex-1 bg-wedding text-white p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:opacity-90 transition-opacity shadow-sm" data-i18n="rsvp.submit">Submit
                             RSVP</button>
                         <button type="button" id="rsvpBackBtn"
-                            class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors">Back</button>
+                            class="w-full sm:flex-1 bg-gray-200 text-text p-3 rounded-sm uppercase tracking-widest text-xs md:text-sm hover:bg-gray-300 transition-colors" data-i18n="rsvp.back">Back</button>
                     </div>
                 </form>
 
                 <!-- Step 3: confirmation -->
                 <div id="rsvp-confirm" class="hidden text-center py-8">
-                    <h3 class="font-serif text-2xl mb-2">Thank you!</h3>
+                    <h3 class="font-serif text-2xl mb-2" data-i18n="rsvp.thanks">Thank you!</h3>
                     <p id="rsvp-confirm-msg" class="text-sm text-gray-600 mb-6"></p>
                     <button type="button" id="rsvpEditBtn"
-                        class="text-sm underline uppercase tracking-widest text-gray-500 hover:text-wedding transition-colors">Change
+                        class="text-sm underline uppercase tracking-widest text-gray-500 hover:text-wedding transition-colors" data-i18n="rsvp.change">Change
                         my response</button>
                 </div>
             </div>
 
-            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-8 md:mt-12">Can't find your name? Email us
-                at <a href="mailto:aldo.y.isabella@gmail.com" class="underline">aldo.y.isabella@gmail.com</a>.</p>
+            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-8 md:mt-12"><span data-i18n="rsvp.cantFind">Can't find your name? Email us
+                at</span> <a href="mailto:aldo.y.isabella@gmail.com" class="underline">aldo.y.isabella@gmail.com</a>.</p>
         </div>
     </section>
 
@@ -922,11 +968,11 @@
         <div
             class="max-w-3xl mx-auto bg-white/95 backdrop-blur-sm p-8 md:p-12 rounded-sm shadow-md border border-[#E5E0D8]">
             <div class="mb-8">
-                <h2 class="font-serif text-4xl md:text-5xl">Gift Registry</h2>
+                <h2 class="font-serif text-4xl md:text-5xl" data-i18n="registry.title">Gift Registry</h2>
             </div>
-            <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6">Your presence is truly the best gift we could
+            <p class="text-lg md:text-xl font-serif italic mb-4 md:mb-6" data-i18n="registry.presence">Your presence is truly the best gift we could
                 ask for!</p>
-            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed max-w-xl mx-auto">
+            <p class="text-sm md:text-md text-gray-600 mb-8 md:mb-12 leading-relaxed max-w-xl mx-auto" data-i18n="registry.text">
                 Since we're already settled in our home out of state, we've decided not to have a traditional gift
                 registry.
                 If you wish to bless us with a gift, cash gifts are incredibly appreciated.
@@ -942,8 +988,8 @@
                             d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                         </path>
                     </svg>
-                    <h3 class="font-serif text-2xl mb-2 text-text">Cashbox</h3>
-                    <p class="text-xs uppercase tracking-widest text-gray-500">Day of the wedding</p>
+                    <h3 class="font-serif text-2xl mb-2 text-text" data-i18n="registry.cashbox">Cashbox</h3>
+                    <p class="text-xs uppercase tracking-widest text-gray-500" data-i18n="registry.cashboxText">Day of the wedding</p>
                 </div>
 
                 <!-- Transfer Money -->
@@ -955,8 +1001,8 @@
                             d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
                         </path>
                     </svg>
-                    <h3 class="font-serif text-2xl mb-2 text-text">Transfer Money</h3>
-                    <p class="text-xs uppercase tracking-widest text-gray-500">Click for details</p>
+                    <h3 class="font-serif text-2xl mb-2 text-text" data-i18n="registry.transfer">Transfer Money</h3>
+                    <p class="text-xs uppercase tracking-widest text-gray-500" data-i18n="registry.transferText">Click for details</p>
                 </div>
             </div>
 
@@ -983,14 +1029,14 @@
          shown again on this device after they submit. -->
     <a id="rsvp-float" href="#rsvp"
         class="md:hidden fixed left-4 right-4 z-40 bg-wedding text-white text-center py-3.5 rounded-full uppercase tracking-widest text-sm font-bold shadow-lg transition-all duration-300 translate-y-24 opacity-0 pointer-events-none"
-        style="bottom: calc(1rem + env(safe-area-inset-bottom));">
+        style="bottom: calc(1rem + env(safe-area-inset-bottom));" data-i18n="hero.rsvp">
         RSVP
     </a>
 
     <!-- Footer -->
     <footer class="bg-text text-white py-8 text-center">
-        <p class="font-serif text-lg">Aldo & Isabella — January 16, 2027</p>
-        <p class="mt-2 text-sm text-white/80">Questions? Call us at
+        <p class="font-serif text-lg">Aldo & Isabella — <span data-i18n="date.long">January 16, 2027</span></p>
+        <p class="mt-2 text-sm text-white/80"><span data-i18n="footer.questions">Questions? Call us at</span>
             <a href="tel:+19157991311" class="underline hover:text-white">(915) 799-1311</a></p>
         <button id="adminOpenBtn" type="button"
             class="mt-3 text-[10px] text-white/40 hover:text-white/70 transition-colors uppercase tracking-widest">Admin</button>
@@ -1098,6 +1144,201 @@
             </div>
         </div>
     </div>
+
+    <!-- English / Spanish. English lives in the HTML itself; Spanish comes from
+         the table below, keyed by each element's data-i18n* attribute. Strings
+         the RSVP code builds on the fly also live here, via window.t().
+
+         Which language a visitor sees:
+           1. ?lang=es or ?lang=en in the link (so a link can be sent per language)
+           2. otherwise the last language they picked on this device
+           3. otherwise their phone/browser language (Spanish if it's Spanish)
+           4. otherwise English
+         Using the EN | ES switch updates ?lang= in the address bar, so a copied
+         link keeps the language. -->
+    <script>
+        (function () {
+            const ES = {
+                'title': 'Aldo & Isabella — Boda',
+                'intro.eyebrow0': 'celebramos nuestra boda',
+                'intro.sub0': 'juntos para siempre',
+                'intro.eyebrow1': 'reserva la fecha',
+                'intro.head1': '16 de enero',
+                'intro.eyebrow2': 'acompáñanos en',
+                'intro.eyebrow3': 'quedan',
+                'intro.head3': 'cordialmente invitados',
+                'intro.sub3': 'a ser testigos de nuestra historia de amor',
+                'intro.prev': 'Diapositiva anterior',
+                'intro.next': 'Siguiente diapositiva',
+                'intro.skip': 'Saltar intro',
+                'nav.home': 'Inicio',
+                'nav.story': 'Nuestra historia',
+                'nav.schedule': 'Itinerario',
+                'nav.details': 'Detalles',
+                'nav.rsvp': 'Confirmar',
+                'nav.registry': 'Regalos',
+                'hero.alt': 'Aldo e Isabella',
+                'hero.rsvp': 'Confirmar asistencia',
+                'hero.directions': 'Cómo llegar',
+                'date.long': '16 de enero de 2027',
+                'deadline': 'Favor de confirmar antes del 10 de diciembre de 2026',
+                'countdown.title': 'Que comience la cuenta regresiva',
+                'countdown.days': 'Días',
+                'countdown.hours': 'Horas',
+                'countdown.mins': 'Minutos',
+                'countdown.secs': 'Segundos',
+                'story.title': 'Nuestra historia de amor',
+                'story.from': 'De Aldo:',
+                'story.p1': 'Nos conocimos en la preparatoria. La fuerza imparable del amor nos atrajo y no intentamos resistirnos ni por un segundo. Los dos nos lanzamos de lleno, y ese amor sin límites es la razón por la que hoy estamos todos aquí.',
+                'story.p2': 'Durante una hermosa caminata en Seattle, miré la sonrisa de Isabella y decidí en ese mismo instante que me iba a casar con ella. Apenas 4 meses después, interrumpí la cena de Acción de Gracias de su familia para pedirle matrimonio al amor de mi vida. Isabella es mi complemento perfecto, y la gloria de Dios nos dio el privilegio de encontrarnos.',
+                'story.alt1': 'Nuestra historia 1',
+                'story.alt2': 'Nuestra historia 2',
+                'story.alt3': 'Nuestra historia 3',
+                'schedule.title': 'Itinerario',
+                'schedule.ceremony': 'Ceremonia',
+                'schedule.cocktail': 'Cóctel',
+                'schedule.dinner': 'Cena',
+                'schedule.party': 'Fiesta',
+                'schedule.cake': 'Corte del pastel',
+                'schedule.lastdance': 'Último baile',
+                'details.title': 'Detalles',
+                'details.parking': 'Estacionamiento',
+                'details.parkingText': 'El hotel ofrece servicio de valet parking por $17.',
+                'details.dress': 'Código de vestimenta',
+                'details.dressText': 'Vestimenta formal — etiqueta (black tie). ¡Anímate a usar colores vibrantes!',
+                'details.hotel': 'Descuento en el hotel',
+                'details.hotelText': 'Reserva con nuestro enlace de grupo para obtener la tarifa especial de la boda.',
+                'details.book': 'Reservar habitación',
+                'details.vision': 'Inspiración',
+                'details.visionText': 'Consulta tu invitación para ver nuestra paleta de colores.',
+                'details.visionAlt': 'Inspiración: el Hotel Plaza, ideas de vestimenta y nuestra paleta de colores',
+                'rsvp.title': 'Confirma tu asistencia',
+                'rsvp.find': 'Busca tu nombre en la lista de invitados',
+                'rsvp.searchPh': 'Escribe tu nombre completo',
+                'rsvp.attending': '¿Nos acompañarás?',
+                'rsvp.accept': 'Con gusto asistiré',
+                'rsvp.decline': 'Lamentablemente no podré asistir',
+                'rsvp.howMany': '¿Cuántos asistirán?',
+                'rsvp.diet': '¿Alguna restricción alimentaria?',
+                'rsvp.veg': 'Vegetariano',
+                'rsvp.noRestriction': 'Ninguna',
+                'rsvp.notes': 'Notas (opcional)',
+                'rsvp.notesPh': 'Canciones que te gustaría escuchar, necesidades de accesibilidad, etc.',
+                'rsvp.submit': 'Enviar confirmación',
+                'rsvp.back': 'Regresar',
+                'rsvp.thanks': '¡Gracias!',
+                'rsvp.change': 'Cambiar mi respuesta',
+                'rsvp.cantFind': '¿No encuentras tu nombre? Escríbenos a',
+                'registry.title': 'Mesa de regalos',
+                'registry.presence': '¡Tu presencia es el mejor regalo que podríamos pedir!',
+                'registry.text': 'Como ya estamos establecidos en nuestro hogar fuera del estado, decidimos no tener una mesa de regalos tradicional. Si deseas bendecirnos con un regalo, agradeceremos muchísimo los regalos en efectivo.',
+                'registry.cashbox': 'Caja de sobres',
+                'registry.cashboxText': 'El día de la boda',
+                'registry.transfer': 'Transferencia',
+                'registry.transferText': 'Toca para ver los datos',
+                'footer.questions': '¿Preguntas? Llámanos al',
+                // Built by the RSVP code
+                'js.loading': 'Cargando lista de invitados...',
+                'js.loadFailed': 'No pudimos cargar la lista de invitados. Actualiza la página o escríbenos.',
+                'js.keepTyping': 'Sigue escribiendo tu nombre completo tal como aparece en tu invitación.',
+                'js.hi': '¡Hola, {name}!',
+                'js.justMe': 'Solo yo (1)',
+                'js.nOfUs': 'Seremos {n}',
+                'js.upTo': 'Tu invitación incluye hasta {n} personas.',
+                'js.chooseAttending': 'Por favor indica si podrás asistir.',
+                'js.submitting': 'Enviando...',
+                'js.missYou': 'Te extrañaremos, pero gracias por avisarnos.',
+                'js.celebrateAll': '¡Nos emociona celebrar con los {n}!',
+                'js.celebrateYou': '¡Nos emociona celebrar contigo!',
+                'js.error': 'Algo salió mal. Por favor intenta de nuevo.'
+            };
+            const EN_JS = {
+                'js.loading': 'Loading guest list...',
+                'js.loadFailed': "Couldn't load the guest list. Please refresh, or email us.",
+                'js.keepTyping': 'Keep typing your full name as it appears on your invitation.',
+                'js.hi': 'Hi, {name}!',
+                'js.justMe': 'Just me (1)',
+                'js.nOfUs': '{n} of us',
+                'js.upTo': 'Your invitation includes up to {n} people.',
+                'js.chooseAttending': 'Please choose whether you can make it.',
+                'js.submitting': 'Submitting...',
+                'js.missYou': "We'll miss you, but thank you for letting us know.",
+                'js.celebrateAll': "We can't wait to celebrate with all {n} of you!",
+                'js.celebrateYou': "We can't wait to celebrate with you!",
+                'js.error': 'Something went wrong. Please try again.'
+            };
+            const SUPPORTED = ['en', 'es'];
+            const ATTRS = [['data-i18n-placeholder', 'placeholder'], ['data-i18n-alt', 'alt'], ['data-i18n-aria', 'aria-label']];
+            const englishTitle = document.title;
+            let current = 'en';
+
+            const fill = (str, vars) => str.replace(/\{(\w+)\}/g, (_, k) => (vars && k in vars ? vars[k] : ''));
+
+            // Translate a string the page builds in JavaScript.
+            window.t = function (key, vars) {
+                const table = current === 'es' ? ES : EN_JS;
+                return fill(table[key] || EN_JS[key] || key, vars);
+            };
+
+            function apply(lang) {
+                current = lang;
+                document.documentElement.lang = lang;
+                document.title = lang === 'es' ? ES.title : englishTitle;
+                document.querySelectorAll('[data-i18n]').forEach((el) => {
+                    // Remember the English from the HTML the first time through.
+                    if (el.dataset.i18nEn === undefined) el.dataset.i18nEn = el.textContent.replace(/\s+/g, ' ').trim();
+                    const key = el.getAttribute('data-i18n');
+                    el.textContent = lang === 'es' && ES[key] ? ES[key] : el.dataset.i18nEn;
+                });
+                ATTRS.forEach(([dataAttr, attr]) => {
+                    document.querySelectorAll('[' + dataAttr + ']').forEach((el) => {
+                        const store = 'i18nEn' + attr.replace(/-./g, (m) => m[1].toUpperCase());
+                        if (el.dataset[store] === undefined) el.dataset[store] = el.getAttribute(attr) || '';
+                        const key = el.getAttribute(dataAttr);
+                        el.setAttribute(attr, lang === 'es' && ES[key] ? ES[key] : el.dataset[store]);
+                    });
+                });
+                document.querySelectorAll('.lang-switch button').forEach((b) => {
+                    const on = b.dataset.lang === lang;
+                    b.classList.toggle('active', on);
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+                window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+            }
+
+            function setLang(lang) {
+                if (!SUPPORTED.includes(lang)) return;
+                try { localStorage.setItem('lang', lang); } catch (e) { }
+                const url = new URL(window.location.href);
+                url.searchParams.set('lang', lang);
+                history.replaceState(null, '', url);
+                apply(lang);
+            }
+
+            function initialLang() {
+                const fromUrl = new URLSearchParams(window.location.search).get('lang');
+                if (SUPPORTED.includes(fromUrl)) {
+                    try { localStorage.setItem('lang', fromUrl); } catch (e) { }
+                    return fromUrl;
+                }
+                try {
+                    const saved = localStorage.getItem('lang');
+                    if (SUPPORTED.includes(saved)) return saved;
+                } catch (e) { }
+                const prefs = navigator.languages || [navigator.language || ''];
+                return prefs.some((l) => /^es\b/i.test(l)) ? 'es' : 'en';
+            }
+
+            window.getLang = () => current;
+            document.querySelectorAll('.lang-switch button').forEach((b) => {
+                b.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setLang(b.dataset.lang);
+                });
+            });
+            apply(initialLang());
+        })();
+    </script>
 
     <!-- Scripts -->
     <script>
@@ -1283,7 +1524,7 @@
             const SWIPE_MIN = 45;     // px of horizontal travel that counts as a swipe
             const TAP_SLOP = 12;     // px of travel still forgiven as a tap/hold
             const HOLD_DELAY = 180;    // ms of stillness before a press counts as a hold
-            const CONTROLS = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn';
+            const CONTROLS = '#intro-dots, .intro-dot, #intro-skip, .intro-nav-btn, .lang-switch';
 
             function navFromX(clientX) {
                 if (clientX < window.innerWidth * BACK_ZONE) {
@@ -1458,14 +1699,43 @@
             const guests = guestStore.list;
             let currentId = null;
 
+            // Messages are kept as keys, not text, so switching language can
+            // re-render whatever is on screen.
+            let searchMsgKey = null;
+            let lastConfirm = null;
+            function setSearchMsg(key) {
+                searchMsgKey = key;
+                searchMsg.textContent = key ? t(key) : '';
+            }
+            function renderConfirm() {
+                if (!lastConfirm) return;
+                const { status, attendingCount } = lastConfirm;
+                confirmMsg.textContent = status === 'no' ? t('js.missYou')
+                    : attendingCount > 1 ? t('js.celebrateAll', { n: attendingCount }) : t('js.celebrateYou');
+            }
+            window.addEventListener('langchange', () => {
+                if (searchMsgKey) searchMsg.textContent = t(searchMsgKey);
+                renderSuggestions(searchInput.value);
+                renderConfirm();
+                formMsg.textContent = '';
+                const g = currentId && guests.find((x) => x.id === currentId);
+                if (g) {
+                    welcome.textContent = t('js.hi', { name: g.name });
+                    const picked = partySelect.value;
+                    setupPartySize(g);
+                    if (picked && partySelect.querySelector(`option[value="${picked}"]`)) partySelect.value = picked;
+                    syncPartyVisibility();
+                }
+            });
+
             async function loadGuests() {
-                searchMsg.textContent = 'Loading guest list...';
+                setSearchMsg('js.loading');
                 try {
                     await guestStore.reload();
-                    searchMsg.textContent = '';
+                    setSearchMsg(null);
                 } catch (err) {
                     console.error(err);
-                    searchMsg.textContent = "Couldn't load the guest list. Please refresh, or email us.";
+                    setSearchMsg('js.loadFailed');
                 }
             }
 
@@ -1530,8 +1800,10 @@
                 if (!q) return;
                 const matches = findMatches(q).slice(0, 5);
                 if (!matches.length) {
-                    suggestionsEl.innerHTML =
-                        '<p class="text-sm text-gray-500 text-center py-2">Keep typing your full name as it appears on your invitation.</p>';
+                    const hint = document.createElement('p');
+                    hint.className = 'text-sm text-gray-500 text-center py-2';
+                    hint.textContent = t('js.keepTyping');
+                    suggestionsEl.appendChild(hint);
                     return;
                 }
                 matches.forEach((g) => {
@@ -1559,13 +1831,13 @@
                 for (let i = 1; i <= seats; i++) {
                     const opt = document.createElement('option');
                     opt.value = String(i);
-                    opt.textContent = i === 1 ? 'Just me (1)' : `${i} of us`;
+                    opt.textContent = i === 1 ? t('js.justMe') : t('js.nOfUs', { n: i });
                     partySelect.appendChild(opt);
                 }
                 // Reuse their previous answer when they come back to edit.
                 const prev = Number(g.attendingCount);
                 partySelect.value = String(prev >= 1 && prev <= seats ? prev : seats);
-                partyHint.textContent = `Your invitation includes up to ${seats} people.`;
+                partyHint.textContent = t('js.upTo', { n: seats });
                 partyWrap.classList.remove('hidden');
                 partyWrap.classList.add('flex');
             }
@@ -1585,7 +1857,7 @@
                 const g = guests.find((x) => x.id === id);
                 if (!g) return;
                 currentId = id;
-                welcome.textContent = `Hi, ${g.name}!`;
+                welcome.textContent = t('js.hi', { name: g.name });
 
                 document.querySelectorAll('input[name="Attending"]').forEach((r) => { r.checked = false; });
                 if (g.status === 'yes' || g.status === 'no') {
@@ -1632,7 +1904,7 @@
                 ev.preventDefault();
                 const attending = document.querySelector('input[name="Attending"]:checked');
                 if (!attending) {
-                    formMsg.textContent = 'Please choose whether you can make it.';
+                    formMsg.textContent = t('js.chooseAttending');
                     formMsg.className = 'text-center font-bold text-sm text-red-600';
                     return;
                 }
@@ -1656,7 +1928,7 @@
                     attendingCount = Math.min(seats, Math.max(1, Number(partySelect.value) || 1));
                 }
 
-                formMsg.textContent = 'Submitting...';
+                formMsg.textContent = t('js.submitting');
                 formMsg.className = 'text-center font-bold text-sm text-gray-600';
 
                 try {
@@ -1679,14 +1951,11 @@
 
                     form.classList.add('hidden');
                     confirmStep.classList.remove('hidden');
-                    confirmMsg.textContent = status === 'no'
-                        ? "We'll miss you, but thank you for letting us know."
-                        : attendingCount > 1
-                            ? `We can't wait to celebrate with all ${attendingCount} of you!`
-                            : "We can't wait to celebrate with you!";
+                    lastConfirm = { status, attendingCount };
+                    renderConfirm();
                 } catch (err) {
                     console.error(err);
-                    formMsg.textContent = 'Something went wrong. Please try again.';
+                    formMsg.textContent = t('js.error');
                     formMsg.className = 'text-center font-bold text-sm text-red-600';
                 }
             });
