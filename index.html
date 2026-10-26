@@ -882,6 +882,14 @@
             <div id="rsvp-root">
                 <!-- Step 1: find your name -->
                 <div id="rsvp-search">
+                    <!-- Shown when this browser has already RSVP'd: one tap back to
+                         their own invitation to change the answer. -->
+                    <div id="rsvp-returning" class="hidden mb-6 p-4 bg-page border border-[#E5E0D8] rounded-sm text-center">
+                        <p id="rsvp-returning-text" class="text-sm text-gray-600 mb-3"></p>
+                        <button type="button" id="rsvpReturningBtn"
+                            class="bg-wedding text-white px-6 py-2 rounded-sm uppercase tracking-widest text-xs hover:opacity-90 transition-opacity" data-i18n="rsvp.update">Update
+                            my RSVP</button>
+                    </div>
                     <label for="guestSearch"
                         class="text-sm font-bold uppercase tracking-widest text-center block mb-3" data-i18n="rsvp.find">Find your name on
                         the guest list</label>
@@ -1088,7 +1096,7 @@
                                     <th class="py-1 pr-3">Guest</th>
                                     <th class="py-1 pr-3">Answer</th>
                                     <th class="py-1 pr-3">Device</th>
-                                    <th class="py-1 pr-3">Device ID</th>
+                                    <th class="py-1 pr-3">Visitor</th>
                                 </tr>
                             </thead>
                             <tbody id="adminHistoryBody"></tbody>
@@ -1229,6 +1237,7 @@
                 'rsvp.thanks': '¡Gracias!',
                 'rsvp.change': 'Cambiar mi respuesta',
                 'rsvp.cantFind': '¿No encuentras tu nombre? Escríbenos a',
+                'rsvp.update': 'Actualizar mi respuesta',
                 'registry.title': 'Mesa de regalos',
                 'registry.presence': '¡Tu presencia es el mejor regalo que podríamos pedir!',
                 'registry.text': 'Como ya estamos establecidos en nuestro hogar fuera del estado, decidimos no tener una mesa de regalos tradicional. Si deseas bendecirnos con un regalo, agradeceremos muchísimo los regalos en efectivo.',
@@ -1250,7 +1259,10 @@
                 'js.missYou': 'Te extrañaremos, pero gracias por avisarnos.',
                 'js.celebrateAll': '¡Nos emociona celebrar con los {n}!',
                 'js.celebrateYou': '¡Nos emociona celebrar contigo!',
-                'js.error': 'Algo salió mal. Por favor intenta de nuevo.'
+                'js.error': 'Algo salió mal. Por favor intenta de nuevo.',
+                'js.alreadyResponded': 'Ya respondiste por {name}.',
+                'js.deviceUsed': 'Este dispositivo ya se usó para confirmar por {name}. Cada dispositivo puede responder por una sola invitación. ¿Necesitas ayuda? Escríbenos.',
+                'js.anotherGuest': 'otro invitado'
             };
             const EN_JS = {
                 'js.loading': 'Loading guest list...',
@@ -1265,7 +1277,10 @@
                 'js.missYou': "We'll miss you, but thank you for letting us know.",
                 'js.celebrateAll': "We can't wait to celebrate with all {n} of you!",
                 'js.celebrateYou': "We can't wait to celebrate with you!",
-                'js.error': 'Something went wrong. Please try again.'
+                'js.error': 'Something went wrong. Please try again.',
+                'js.alreadyResponded': "You've already responded for {name}.",
+                'js.deviceUsed': 'This device has already been used to RSVP for {name}. Each device can respond for one invitation. Need help? Email us.',
+                'js.anotherGuest': 'another guest'
             };
             const SUPPORTED = ['en', 'es'];
             const ATTRS = [['data-i18n-placeholder', 'placeholder'], ['data-i18n-alt', 'alt'], ['data-i18n-aria', 'aria-label']];
@@ -1617,9 +1632,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
         import {
-            initializeFirestore, collection, doc, getDocs, updateDoc, addDoc, deleteDoc,
-            query, orderBy, limit, serverTimestamp
+            initializeFirestore, collection, doc, getDoc, getDocs, updateDoc, addDoc, deleteDoc,
+            writeBatch, query, orderBy, limit, serverTimestamp
         } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD5PUi8VFK5hN7gZxjIJtBYhXeUnT3mugk",
@@ -1638,22 +1654,14 @@
         const guestsRef = collection(db, 'guests');
         const historyRef = collection(db, 'rsvpHistory');
 
-        // A random ID kept in this browser, recorded with each RSVP in the
-        // history so submissions from the same device can be spotted. Same
-        // across tabs and visits; a private window, another browser or cleared
-        // site data gets a new one.
-        function getDeviceId() {
-            try {
-                let id = localStorage.getItem('deviceId');
-                if (!id) {
-                    id = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now()).replace(/-/g, '');
-                    localStorage.setItem('deviceId', id);
-                }
-                return id.slice(0, 64);
-            } catch (e) {
-                return 'unavailable';
-            }
-        }
+        // Every visitor is silently signed in anonymously. The resulting uid is
+        // the "visitor ID": stable across tabs and visits in the same browser,
+        // issued by Firebase so it can't be forged as someone else's. The rules
+        // use it to allow one invitation per visitor and to stamp the history.
+        // Requires Anonymous sign-in to be enabled in the Firebase console.
+        const auth = getAuth(app);
+        const visitorReady = signInAnonymously(auth).then((cred) => cred.user.uid);
+        visitorReady.catch((err) => console.error('Anonymous sign-in failed', err));
 
         function escapeHtml(s) {
             const div = document.createElement('div');
@@ -1717,6 +1725,7 @@
                 if (searchMsgKey) searchMsg.textContent = t(searchMsgKey);
                 renderSuggestions(searchInput.value);
                 renderConfirm();
+                renderReturning();
                 formMsg.textContent = '';
                 const g = currentId && guests.find((x) => x.id === currentId);
                 if (g) {
@@ -1726,6 +1735,34 @@
                     if (picked && partySelect.querySelector(`option[value="${picked}"]`)) partySelect.value = picked;
                     syncPartyVisibility();
                 }
+            });
+
+            // The invitation this visitor has already answered for, if any. Each
+            // visitor ID may answer for one invitation only (enforced again by the
+            // rules); they can change that answer as often as they like.
+            let boundGuestId = null;
+            const returningBox = document.getElementById('rsvp-returning');
+            const returningText = document.getElementById('rsvp-returning-text');
+
+            function renderReturning() {
+                const g = boundGuestId && guests.find((x) => x.id === boundGuestId);
+                returningBox.classList.toggle('hidden', !g);
+                if (g) returningText.textContent = t('js.alreadyResponded', { name: g.name });
+            }
+
+            async function loadVisitor() {
+                try {
+                    const uid = await visitorReady;
+                    const snap = await getDoc(doc(db, 'visitors', uid));
+                    boundGuestId = snap.exists() ? snap.data().guestId : null;
+                    renderReturning();
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+
+            document.getElementById('rsvpReturningBtn').addEventListener('click', () => {
+                if (boundGuestId) selectGuest(boundGuestId);
             });
 
             async function loadGuests() {
@@ -1856,6 +1893,16 @@
             function selectGuest(id) {
                 const g = guests.find((x) => x.id === id);
                 if (!g) return;
+                if (boundGuestId && boundGuestId !== id) {
+                    const mine = guests.find((x) => x.id === boundGuestId);
+                    suggestionsEl.innerHTML = '';
+                    searchMsgKey = null;
+                    searchMsg.innerHTML = t('js.deviceUsed', {
+                        name: '<strong>' + escapeHtml(mine ? mine.name : t('js.anotherGuest')) + '</strong>'
+                    });
+                    return;
+                }
+                setSearchMsg(null);
                 currentId = id;
                 welcome.textContent = t('js.hi', { name: g.name });
 
@@ -1893,6 +1940,7 @@
                 searchStep.classList.remove('hidden');
                 searchInput.value = '';
                 suggestionsEl.innerHTML = '';
+                renderReturning();
             });
 
             document.getElementById('rsvpEditBtn').addEventListener('click', () => {
@@ -1932,20 +1980,28 @@
                 formMsg.className = 'text-center font-bold text-sm text-gray-600';
 
                 try {
-                    await updateDoc(doc(db, 'guests', currentId), {
+                    const uid = await visitorReady;
+                    if (boundGuestId && boundGuestId !== currentId) throw new Error('visitor already bound');
+
+                    const batch = writeBatch(db);
+                    if (!boundGuestId) {
+                        batch.set(doc(db, 'visitors', uid), { guestId: currentId, createdAt: serverTimestamp() });
+                    }
+                    batch.update(doc(db, 'guests', currentId), {
                         status, vegetarian, notes, attendingCount, respondedAt: serverTimestamp()
                     });
-                    if (g) Object.assign(g, { status, vegetarian, notes, attendingCount });
-
-                    // Best effort: a failed history write must never fail the RSVP.
-                    addDoc(historyRef, {
+                    batch.set(doc(historyRef), {
                         guestId: currentId,
                         guestName: g ? g.name : '',
                         status, vegetarian, notes, attendingCount,
-                        deviceId: getDeviceId(),
+                        visitorId: uid,
                         userAgent: navigator.userAgent.slice(0, 300),
                         at: serverTimestamp()
-                    }).catch((err) => console.error('History write failed', err));
+                    });
+                    await batch.commit();
+
+                    boundGuestId = currentId;
+                    if (g) Object.assign(g, { status, vegetarian, notes, attendingCount });
                     try { localStorage.setItem('rsvpDone', '1'); } catch (e) { }
                     window.dispatchEvent(new Event('rsvp-done'));
 
@@ -1960,7 +2016,7 @@
                 }
             });
 
-            loadGuests();
+            loadGuests().then(loadVisitor);
         })();
 
         // ===== ADMIN: password-gated, read-only guest list =====
@@ -2270,7 +2326,7 @@
                             <td class="py-1 pr-3">${escapeHtml(h.guestName || '')}</td>
                             <td class="py-1 pr-3 whitespace-nowrap">${escapeHtml(answer)}</td>
                             <td class="py-1 pr-3 whitespace-nowrap">${escapeHtml(deviceLabel(h.userAgent))}</td>
-                            <td class="py-1 pr-3 font-mono" title="${escapeHtml(h.deviceId || '')}">${escapeHtml((h.deviceId || '').slice(0, 6))}</td>`;
+                            <td class="py-1 pr-3 font-mono" title="${escapeHtml(h.visitorId || '')}">${escapeHtml((h.visitorId || '').slice(0, 6))}</td>`;
                         historyBody.appendChild(tr);
                     });
                 } catch (err) {
