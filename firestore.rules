@@ -25,6 +25,8 @@ rules_version = '2';
 //   - an update may only touch the response fields (status, vegetarian,
 //     notes, respondedAt, maxGuests, attendingCount), so a guest RSVPing
 //     can't rewrite someone's name
+//   - every RSVP is also appended to /rsvpHistory, which nobody can edit or
+//     delete, so an overwritten answer can always be traced and restored
 //   - the admin page has an "Export CSV" button; taking a backup now and
 //     then is the recovery path if the list is ever destroyed
 //
@@ -90,6 +92,29 @@ service cloud.firestore {
       // Removing a guest from the admin page. Unrestricted — see the note
       // at the top of this file.
       allow delete: if true;
+    }
+
+    // Append-only log of every RSVP submission, read by the admin page's
+    // History view. Readable like the guest list (the admin page has no real
+    // auth), but entries can never be edited or deleted. The page writes
+    // these best-effort, so an RSVP still goes through if this is rejected.
+    match /rsvpHistory/{entryId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['guestId', 'guestName', 'status',
+                           'vegetarian', 'notes', 'attendingCount', 'deviceId', 'userAgent', 'at'])
+                    && request.resource.data.guestId is string
+                    && exists(/databases/$(database)/documents/guests/$(request.resource.data.guestId))
+                    && request.resource.data.at == request.time
+                    && request.resource.data.guestName is string
+                    && request.resource.data.guestName.size() <= 120
+                    && request.resource.data.status in ['yes', 'no']
+                    && request.resource.data.notes is string
+                    && request.resource.data.notes.size() < 1000
+                    && request.resource.data.deviceId is string
+                    && request.resource.data.deviceId.size() <= 64
+                    && request.resource.data.userAgent is string
+                    && request.resource.data.userAgent.size() <= 300;
+      allow update, delete: if false;
     }
   }
 }
