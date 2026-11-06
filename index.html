@@ -602,6 +602,9 @@
             text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
         }
         .lang-switch-intro button { padding: 0.4rem 0.2rem; }
+
+        /* Keep RSVP steps clear of the fixed nav when scrolled into view. */
+        #rsvp-form, #rsvp-confirm { scroll-margin-top: 6rem; }
     </style>
 </head>
 
@@ -1898,6 +1901,7 @@
             document.getElementById('rsvpEditBtn').addEventListener('click', () => {
                 confirmStep.classList.add('hidden');
                 if (currentId) selectGuest(currentId);
+                form.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
 
             form.addEventListener('submit', async (ev) => {
@@ -1931,6 +1935,14 @@
                 formMsg.textContent = t('js.submitting');
                 formMsg.className = 'text-center font-bold text-sm text-gray-600';
 
+                // Lock the button while sending so repeated taps can't send
+                // duplicate submissions.
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const submitLabel = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-60', 'cursor-wait');
+                submitBtn.textContent = t('js.submitting');
+
                 try {
                     await updateDoc(doc(db, 'guests', currentId), {
                         status, vegetarian, notes, attendingCount, respondedAt: serverTimestamp()
@@ -1953,10 +1965,20 @@
                     confirmStep.classList.remove('hidden');
                     lastConfirm = { status, attendingCount };
                     renderConfirm();
+                    // The form is tall and the thank-you is short: on a phone the
+                    // guest is scrolled down by the Submit button, so without this
+                    // the confirmation lands above the screen and looks like
+                    // nothing happened.
+                    confirmStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } catch (err) {
                     console.error(err);
                     formMsg.textContent = t('js.error');
                     formMsg.className = 'text-center font-bold text-sm text-red-600';
+                    formMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-60', 'cursor-wait');
+                    submitBtn.textContent = submitLabel;
                 }
             });
 
